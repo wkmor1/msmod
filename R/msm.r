@@ -7,6 +7,12 @@
 #' @param traits Character. Column names of species trait variables.
 #' @param data A data.frame containing the variables for the model.
 #' @param site_re Logical. Should a site level random effect be included.
+#' @examples
+#' 
+#' library(msm)
+#' data(eucs)
+#' msm('present', 'plot', 'logit_rock', 'species', 'ln_sla', eucs) 
+#' 
 #' @export
 msm <- function (y, sites, x, species, traits, data, site_re=FALSE) {
   `%>%` <- magrittr::`%>%`
