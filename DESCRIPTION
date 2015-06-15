@@ -10,7 +10,6 @@ Imports:
     dplyr,
     lme4,
     magrittr,
-    tidyr,
 Suggests:
     knitr,
 VignetteBuilder: knitr
