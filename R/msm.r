@@ -21,7 +21,11 @@ msm <- function(y, sites, x, species, traits, data, site_re=FALSE) {
 
   data %<>%
   dplyr::mutate_each_(
-    dplyr::funs(base::scale(.) / 2),
+    dplyr::funs(
+      base::scale(.) %>%
+      magrittr::extract(, 1) %>%
+      magrittr::divide_by(2)
+      ),
     base::c(x, traits)
   )
 
