@@ -1,6 +1,6 @@
 Package: msm
 Title: Fit multispecies models
-Version: 0.0.0.9009
+Version: 0.0.0.9010
 Authors@R: person(c("William", "Keith"), "Morris", email = "wkmor1@gmail.com", role = c("aut", "cre"))
 Description: Functions to fit multispecies models.
 Depends: 
@@ -15,6 +15,7 @@ Imports:
     lme4,
     magrittr,
     methods,
+    R2jags,
 Suggests:
     knitr
 VignetteBuilder: knitr

@@ -17,6 +17,7 @@
 msm <- function(y, sites, x, species, traits, data, site_re=FALSE) {
 
   x %<>% dplyr::select_vars_(base::names(data), .)
+
   traits %<>% dplyr::select_vars_(base::names(data), .)
 
   data %<>%
@@ -34,47 +35,52 @@ msm <- function(y, sites, x, species, traits, data, site_re=FALSE) {
     dplyr::select(species) %>%
     dplyr::distinct(.) %>%
     base::nrow(.)
-  
+
   msm_glmer(y, sites, x, species, n_species, traits, data, site_re)
 }
 
 msm_glmer <- function(y, sites, x, species, n_species, traits, data, site_re) {
-  ' %s ~ %s + %s + (1 + %s | %s)' %>%
 
+  ' %s ~ %s + %s + (1 + %s | %s)' %>%
   base::paste0(
     site_re %>% 
     dplyr::first(.) %>% 
     base::ifelse(' + (1 | %s)', '')
   ) %>%
-
   base::sprintf(
     y,
     x %>% 
-      base::paste(collapse=' + '),
+    base::paste(collapse=' + '),
     x %>% 
-      base::expand.grid(traits) %>%
-      base::do.call(
-        function(...) base::paste(..., sep=':'), .
-      ) %>%
-      base::unlist(.) %>%
-      base::paste(collapse=' + '),
+    base::expand.grid(traits) %>%
+    base::do.call(
+      function(...) base::paste(..., sep=':'), .
+    ) %>%
+    base::unlist(.) %>%
+    base::paste(collapse=' + '),
     x %>% 
-      base::paste(collapse=' + '),
+    base::paste(collapse=' + '),
     species,
     sites
   ) %>%
-
   stats::formula(.) %>%
-
   lme4::glmer(
     data=data,
-    family  = stats::binomial,
-    control = lme4::glmerControl(
-      optimizer = "bobyqa",
-      optCtrl   = base::list(
-        maxfun = (n_species^2 / 2)^2 * 10 + 1
+    family=stats::binomial,
+    control=
+      lme4::glmerControl(
+        optimizer="bobyqa",
+        optCtrl=
+          base::list(
+            maxfun=
+              n_species %>%
+              magrittr::raise_to_power(2) %>%
+              magrittr::divide_by(2) %>%
+              magrittr::raise_to_power(2) %>%
+              magrittr::multiply(10) %>%
+              magrittr::add(1)
+          )
       )
-    )
   )
 }
 
