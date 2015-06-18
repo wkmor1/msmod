@@ -1,15 +1,20 @@
 Package: msm
 Title: Fit multispecies models
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: person(c("William", "Keith"), "Morris", email = "wkmor1@gmail.com", role = c("aut", "cre"))
 Description: Functions to fit multispecies models.
-Depends: R (>= 3.2.0)
+Depends: 
+    R (>= 3.2.0), 
+    Matrix
 License: file LICENSE
 LazyData: true
 Imports:
+    arm,
     dplyr,
+    ggplot2,
     lme4,
     magrittr,
+    methods,
 Suggests:
-    knitr,
+    knitr
 VignetteBuilder: knitr
