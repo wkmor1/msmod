@@ -14,16 +14,15 @@
 #' msm_fit <- msm('present', 'plot', 'logit_rock', 'species', 'ln_sla', eucs) 
 #' 
 #' @export
-msm <- function (y, sites, x, species, traits, data, site_re=FALSE) {
+msm <- function(y, sites, x, species, traits, data, site_re=FALSE) {
 
   x %<>% dplyr::select_vars_(base::names(data), .)
   traits %<>% dplyr::select_vars_(base::names(data), .)
 
   data %<>%
-
   dplyr::mutate_each_(
-  	dplyr::funs(base::scale(.) / 2), 
-  	base::c(x, traits)
+    dplyr::funs(base::scale(.) / 2),
+    base::c(x, traits)
   )
 
   n_species <-
@@ -31,21 +30,32 @@ msm <- function (y, sites, x, species, traits, data, site_re=FALSE) {
     dplyr::select(species) %>%
     dplyr::distinct(.) %>%
     base::nrow(.)
+  
+  msm_glmer(y, sites, x, species, n_species, traits, data, site_re)
+}
 
+msm_glmer <- function(y, sites, x, species, n_species, traits, data, site_re) {
   ' %s ~ %s + %s + (1 + %s | %s)' %>%
 
   base::paste0(
-    site_re %>% dplyr::first(.) %>% base::ifelse(' + (1 | %s)', '')
+    site_re %>% 
+    dplyr::first(.) %>% 
+    base::ifelse(' + (1 | %s)', '')
   ) %>%
 
   base::sprintf(
     y,
-    x %>% base::paste(collapse=' + '),
-    x %>% base::expand.grid(traits) %>%
-      base::do.call(function(...) base::paste(..., sep=':'), .) %>%
+    x %>% 
+      base::paste(collapse=' + '),
+    x %>% 
+      base::expand.grid(traits) %>%
+      base::do.call(
+        function(...) base::paste(..., sep=':'), .
+      ) %>%
       base::unlist(.) %>%
       base::paste(collapse=' + '),
-    x %>% base::paste(collapse=' + '),
+    x %>% 
+      base::paste(collapse=' + '),
     species,
     sites
   ) %>%
