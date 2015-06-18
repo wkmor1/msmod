@@ -11,19 +11,20 @@
 #' 
 #' library(msm)
 #' data(eucs)
-#' msm('present', 'plot', 'logit_rock', 'species', 'ln_sla', eucs) 
+#' msm_fit <- msm('present', 'plot', 'logit_rock', 'species', 'ln_sla', eucs) 
 #' 
 #' @export
 msm <- function (y, sites, x, species, traits, data, site_re=FALSE) {
-  `%>%` <- magrittr::`%>%`
-  `%<>%` <- magrittr::`%<>%`
 
   x %<>% dplyr::select_vars_(base::names(data), .)
   traits %<>% dplyr::select_vars_(base::names(data), .)
 
   data %<>%
 
-  dplyr::mutate_each_(dplyr::funs(base::scale(.) / 2), base::c(x, traits))
+  dplyr::mutate_each_(
+  	dplyr::funs(base::scale(.) / 2), 
+  	base::c(x, traits)
+  )
 
   n_species <-
     data %>%

@@ -27,6 +27,6 @@ Fit a multispecies model
 \examples{
 library(msm)
 data(eucs)
-msm('present', 'plot', 'logit_rock', 'species', 'ln_sla', eucs)
+msm_fit <- msm('present', 'plot', 'logit_rock', 'species', 'ln_sla', eucs)
 }
 
