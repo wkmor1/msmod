@@ -3,6 +3,7 @@
 #' @importFrom magrittr %<>%
 #' @importFrom magrittr %T>%
 
+# Check if a glmerMod class
 is_glmerMod <- function(x) {
   x %>%
   base::class(.) %>% 
@@ -15,3 +16,8 @@ is_glmerMod <- function(x) {
     }
   }
 }
+
+# magrittr like function to return something else if condition is met
+return_if <- function(x, test, y) {
+  if (test) y else x
+  }
