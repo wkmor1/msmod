@@ -17,7 +17,13 @@ is_glmerMod <- function(x) {
   }
 }
 
-# magrittr like function to return something else if condition is met
+# magrittr like functions to return something else if condition is met or not
 return_if <- function(x, test, y) {
   if (test) y else x
-  }
+}
+
+return_if_not <- function(x, test, y) {
+  if (test) x else y
+}
+
+
