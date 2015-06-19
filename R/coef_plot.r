@@ -15,9 +15,6 @@ coef_plot <- function(x) {
   x %>%
   is_glmerMod(.)
 
- "forceSymmetric" %>%
-    assign(Matrix::forceSymmetric)
-
   dplyr::data_frame(
     coef=
       x %>%
