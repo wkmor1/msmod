@@ -4,7 +4,8 @@
 \alias{msm}
 \title{Fit a multispecies model}
 \usage{
-msm(y, sites, x, species, traits, data, site_re = FALSE)
+msm(y, sites, x, species, traits, data, site_re = FALSE, method = c("glmer",
+  "jags"), ...)
 }
 \arguments{
 \item{y}{Character. Column name of response variable, species occurrences.}
@@ -20,6 +21,10 @@ msm(y, sites, x, species, traits, data, site_re = FALSE)
 \item{data}{A data.frame containing the variables for the model.}
 
 \item{site_re}{Logical. Should a site level random effect be included.}
+
+\item{method}{The used to fit the model.}
+
+\item{...}{Further arguments to pass on to model fitting functions.}
 }
 \description{
 Fit a multispecies model
