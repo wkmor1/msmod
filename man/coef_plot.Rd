@@ -13,8 +13,6 @@ coef_plot(x)
 Plot the coefficients of a multispecies model
 }
 \examples{
-library(msm)
-data(eucs)
 msm_fit <- msm('present', 'plot', 'logit_rock', 'species', 'ln_sla', eucs)
 coef_plot(msm_fit)
 }

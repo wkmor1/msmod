@@ -19,8 +19,6 @@ te_plot(x, x_var, trait, nsims = 200)
 Plot the relationship between a trait and the environment infered from a multispecies model
 }
 \examples{
-library(msm)
-data(eucs)
 msm_fit <- msm('present', 'plot', 'logit_rock', 'species', 'ln_sla', eucs)
 te_plot(msm_fit, 'logit_rock', 'ln_sla')
 }

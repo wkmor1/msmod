@@ -2,29 +2,24 @@
 #'
 #' @param x An object of class 'glmerMod'
 #' @examples
-#'
-#' library(msm)
-#' data(eucs)
 #' msm_fit <- msm('present', 'plot', 'logit_rock', 'species', 'ln_sla', eucs)
 #' coef_plot(msm_fit) 
-#'
 #' @export
 
 coef_plot <- function(x) {
 
-  x %>%
-  is_glmerMod(.)
+  is_glmerMod(x)
 
   dplyr::data_frame(
-    coef=
+    coef =
       x %>%
       methods::slot('pp') %>%
-      base::get('X', envir=.) %>%
+      base::get('X', envir = .) %>%
       base::colnames(.),
-    `Coefficient value`=
+    `Coefficient value` =
       x %>%
       lme4::fixef(.),
-    ci=
+    ci =
       x %>%
       lme4::vcov.merMod(.) %>%
       methods::slot('factors') %>%
@@ -34,16 +29,16 @@ coef_plot <- function(x) {
   ) %>%
 
   ggplot2::ggplot(
-    ggplot2::aes(x=`Coefficient value`, y=coef)
+    ggplot2::aes(x = `Coefficient value`, y = coef)
   ) + 
   ggplot2::geom_point() +
   ggplot2::geom_errorbarh(
     ggplot2::aes(
-      xmin=`Coefficient value` - ci,
-      xmax=`Coefficient value` + ci,
-      height=0)  
+      xmin = `Coefficient value` - ci,
+      xmax = `Coefficient value` + ci,
+      height = 0)  
   ) +
-  ggplot2::scale_y_discrete(name='')
+  ggplot2::scale_y_discrete(name = '')
 }
 
-utils::globalVariables(c(".", "Coefficient value", "ci"))
+utils::globalVariables(c("Coefficient value", "ci"))

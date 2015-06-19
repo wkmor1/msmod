@@ -5,17 +5,13 @@
 #' @param trait Character. Name of species trait variable.
 #' @param nsims Integer. Number of simulations for approximate Bayesian estimates of credible intervals and posterior densities.
 #' @examples
-#'
-#' library(msm)
-#' data(eucs)
 #' msm_fit <- msm('present', 'plot', 'logit_rock', 'species', 'ln_sla', eucs)
 #' te_plot(msm_fit, 'logit_rock', 'ln_sla')
-#'
 #' @export
 
 te_plot <- function(x, x_var, trait, nsims=200) {
-  x %>%
-  is_glmerMod(.)
+
+  is_glmerMod(x)
 
   frame <-
     x %>%
