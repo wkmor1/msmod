@@ -1,4 +1,5 @@
-#' @import Matrix
+#' @import lme4
+#' @import R2jags
 #' @importFrom magrittr %>%
 #' @importFrom magrittr %<>%
 #' @importFrom magrittr %T>%
