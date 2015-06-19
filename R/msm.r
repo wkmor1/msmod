@@ -19,7 +19,7 @@
 msm <- function(y, sites, x, species, traits, data, site_re=FALSE,
   method=c('glmer', 'jags'), ...) {
 
-  method %<>% base::match.arg(.)
+  method <- base::match.arg(method)
 
   x %<>% dplyr::select_vars_(base::names(data), .)
 
@@ -78,18 +78,17 @@ msm_glmer <- function(y, sites, x, species, n_species, traits, data, site_re,
       sites
     ) %>%
     stats::formula(.) %>%
-    base::list()
+    base::list() %>%
     magrittr::inset2('data', data) %>%
     magrittr::inset2('family', stats::binomial)
-  
+
   args %>%
-  return_if(
-    ... %>%
-    base::as.list %>%
+  return_if_not(
+    list(...) %>%
     magrittr::extract2('family') %>%
-    base::is.null,
+    base::is.null(.),
     args %>%
-    magrittr::inset2('family', NULL),
+    magrittr::inset2('family', NULL)
   ) %>%
   base::do.call(lme4::glmer, .)
 }
@@ -159,12 +158,9 @@ msm_jags <- function(y, sites, x, species, n_species, traits, data, site_re,
     Tau[1:n_species, 1:n_species] ~ dwish(I[, ], df)
   }) %>%
   R2jags::jags(
-    data=
-      c('Y', 'X', 'K', 'n_sites', 'n_species', 'I', 'df'),
-    inits=
-      inits,
-    parameters.to.save=
-      c('Beta_raw', 'Tau'), 
+    data=c('Y', 'X', 'K', 'n_sites', 'n_species', 'I', 'df'),
+    inits=inits,
+    parameters.to.save=c('Beta_raw', 'Tau'), 
     model.file=.,
     ...
   )
