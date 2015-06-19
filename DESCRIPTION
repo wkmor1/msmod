@@ -6,7 +6,7 @@ Description: Functions to fit multispecies models.
 Depends: 
     R (>= 3.2.0), 
     Matrix
-License: file LICENSE
+License: MIT + file LICENSE
 LazyData: true
 Imports:
     arm,
