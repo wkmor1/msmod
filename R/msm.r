@@ -10,11 +10,11 @@
 #' @param method The used to fit the model.
 #' @param ... Further arguments to pass on to model fitting functions.
 #' @examples
-#' 
-#' library(msm)
-#' data(eucs)
-#' msm_fit <- msm('present', 'plot', 'logit_rock', 'species', 'ln_sla', eucs)
-#' 
+#' msm_glmer <- msm('present', 'plot', 'logit_rock', 'species', 'ln_sla', eucs)
+#' msm_glmer_probit <- msm('present', 'plot', 'logit_rock', 'species', 'ln_sla',
+#'   eucs, family=binomial(link='probit'))
+#' msm_jags <- msm('present', 'plot', 'logit_rock', 'species', 'ln_sla', eucs,
+#'   method='jags')
 #' @export
 msm <- function(y, sites, x, species, traits, data, site_re=FALSE,
   method=c('glmer', 'jags'), ...) {
