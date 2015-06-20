@@ -17,9 +17,7 @@
 #'   method='jags')
 #' @export
 msm <- function(y, sites, x, species, traits, data, site_re=FALSE,
-  method=c('glmer', 'jags'), ...) {
-
-  method <- base::match.arg(method)
+                method=c("glmer", "jags"), ...) {
 
   x %<>% dplyr::select_vars_(base::names(data), .)
 
@@ -40,93 +38,99 @@ msm <- function(y, sites, x, species, traits, data, site_re=FALSE,
     dplyr::select(species) %>%
     dplyr::distinct(.) %>%
     base::nrow(.)
-  
+
+  dots <- list(...)
+
+  method <- base::match.arg(method)
+
   method %>%
   switch(
-    glmer=
-      msm_glmer(y, sites, x, species, n_species, traits, data, site_re, ...),
-    jags=
-      msm_jags(y, sites, x, species, n_species, traits, data, site_re, ...)
-
+    glmer =
+      msm_glmer(y, sites, x, species, n_species, traits, data, site_re, dots),
+    jags =
+      msm_jags(y, sites, x, species, n_species, traits, data, site_re, dots)
   )
 }
 
 msm_glmer <- function(y, sites, x, species, n_species, traits, data, site_re,
-  ...) {
-
-  args <-
-    ' %s ~ %s + %s + (1 + %s | %s)' %>%
-    base::paste0(
-      site_re %>% 
-      dplyr::first(.) %>% 
-      base::ifelse(' + (1 | %s)', '')
-    ) %>%
-    base::sprintf(
-      y,
-      x %>% 
-      base::paste(collapse=' + '),
-      x %>% 
-      base::expand.grid(traits) %>%
-      base::do.call(
-        function(...) base::paste(..., sep=':'), .
-      ) %>%
-      base::unlist(.) %>%
-      base::paste(collapse=' + '),
-      x %>%
-      base::paste(collapse=' + '),
-      species,
-      sites
-    ) %>%
-    stats::formula(.) %>%
-    base::list() %>%
-    magrittr::inset2('data', data) %>%
-    magrittr::inset2('family', stats::binomial)
-
-  args %>%
-  return_if_not(
-    list(...) %>%
-    magrittr::extract2('family') %>%
-    base::is.null(.),
-    args %>%
-    magrittr::inset2('family', NULL)
+  dots) {
+  
+  ' %s ~ %s + %s + (1 + %s | %s)' %>%
+  base::paste0(
+    site_re %>% 
+    dplyr::first(.) %>% 
+    base::ifelse(' + (1 | %s)', '')
   ) %>%
-  base::do.call(lme4::glmer, .)
+  base::sprintf(
+    y,
+    x %>% 
+    base::paste(collapse = ' + '),
+    x %>% 
+    base::expand.grid(traits) %>%
+    base::do.call(
+      function(...) base::paste(..., sep = ':'), .
+    ) %>%
+    base::unlist(.) %>%
+    base::paste(collapse = ' + '),
+    x %>%
+    base::paste(collapse = ' + '),
+    species,
+    sites
+  ) %>%
+  stats::formula(.) %>%
+  base::list(data) %>%
+  magrittr::set_names(c('formula', 'data')) %>%
+  bind_if_not_in(dots, 'family', stats::binomial) %>%
+  base::c(dots) %>%
+  eval_with_args(lme4::glmer)
 }
 
 msm_jags <- function(y, sites, x, species, n_species, traits, data, site_re,
-  ...) {
+  dots) {
 
+  model <-
+    function() {
+      for (site in 1:n_sites) {
+        Z[site, 1:n_species] ~ dmnorm(Mu[site, ], Tau[, ])
+        for (species in 1:n_species) {
+          Mu[site, species] <- 
+            inprod(Beta_raw[species, ], X[site, ])
+          Y[site, species] ~ dbern(P[site, species])
+          P[site, species] <- step(Z[site, species])
+        }
+      }
+      for (species in 1:n_species) {
+        for (k in 1:K) {
+          Beta_raw[species, k] ~ dnorm(mu_raw[k], tau[k])
+        }
+      }
+      for (k in 1:K) {
+        mu_raw[k] ~ dnorm(0, .0001)
+        tau[k] <- pow(sigma_raw[k], -2)
+        sigma_raw[k] ~ dunif(0, 100)
+      }
+      Tau[1:n_species, 1:n_species] ~ dwish(I[, ], df)
+    }
+  
   Y <-
     y %>%
     dplyr::select_(data, .) %>%
     base::unlist(.) %>%
-    base::matrix(ncol=n_species)
+    base::matrix(ncol = n_species)
 
-  X <-
+  X =
     data %>%
     dplyr::distinct_(sites) %>%
     dplyr::select_(x) %>%
-    magrittr::inset2('(Intercept)', value=1) %>%
+    magrittr::inset2('(Intercept)', value = 1) %>%
     base::rev(.)
-  
-  K <-
-    X %>%
-    base::ncol(.)
-
-  n_sites <-
-    X %>%
-    base::nrow(.)
-  
-  I <-
-    n_species %>%
-    base::diag(.)
-
-  df <-
-    n_species %>%
-    magrittr::add(1)
-
+    
   inits <-
-    base::list(Tau=I) %>%
+    base::list(
+      Tau =
+        n_species %>%
+        base::diag(.)
+    ) %>%
     magrittr::inset2(
       'Z',
        Y %>%
@@ -134,37 +138,35 @@ msm_jags <- function(y, sites, x, species, n_species, traits, data, site_re,
     ) %>%
     base::list(.) %>%
     base::rep(3)
-  
-  (function() {
-    for (site in 1:n_sites) {
-      Z[site, 1:n_species] ~ dmnorm(Mu[site, ], Tau[, ])
-      for (species in 1:n_species) {
-        Mu[site, species] <- 
-          inprod(Beta_raw[species, ], X[site, ])
-        Y[site, species] ~ dbern(P[site, species])
-        P[site, species] <- step(Z[site, species])
-      }
-    }
-    for (species in 1:n_species) {
-      for (k in 1:K) {
-        Beta_raw[species, k] ~ dnorm(mu_raw[k], tau[k])
-      }
-    }
-    for (k in 1:K) {
-      mu_raw[k] ~ dnorm(0, .0001)
-      tau[k] <- pow(sigma_raw[k], -2)
-      sigma_raw[k] ~ dunif(0, 100)
-    }
-    Tau[1:n_species, 1:n_species] ~ dwish(I[, ], df)
-  }) %>%
-  R2jags::jags(
-    data=c('Y', 'X', 'K', 'n_sites', 'n_species', 'I', 'df'),
-    inits=inits,
-    parameters.to.save=c('Beta_raw', 'Tau'), 
-    model.file=.,
-    ...
-  )
 
+  parameters.to.save <-
+    c('Beta_raw', 'Tau')
+  
+  base::list(
+    Y = Y,
+    X = X,
+    K =
+      X %>%
+      base::ncol(.),
+    n_species = n_species,
+    n_sites =
+      X %>%
+      base::nrow(.),
+    I =
+      n_species %>%
+      base::diag(.),
+    df =
+      n_species %>%
+      magrittr::add(1)
+  ) %>%
+  base::list(model) %>%
+  magrittr::set_names(c('data', 'model.file')) %>%
+  bind_if_not_in(dots, 'inits') %>%
+  bind_if_not_in(dots, 'parameters.to.save') %>%
+  bind_if_not_in(dots, 'n.iter', 200) %>%
+  base::c(dots) %>%
+  eval_with_args(R2jags::jags)
 }
 
-utils::globalVariables(c(".", "x_"))
+c("n_sites", "inprod", "Beta_raw", "Z", "K", "pow", "sigma_raw") %>%
+  utils::globalVariables(.)
