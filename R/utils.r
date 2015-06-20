@@ -1,3 +1,4 @@
+#' @import ggplot2
 #' @import lme4
 #' @import R2jags
 #' @importFrom magrittr %>%
