@@ -93,7 +93,7 @@ msm_jags <- function(y, sites, x, species, n_species, traits, data, site_re,
       for (site in 1:n_sites) {
         Z[site, 1:n_species] ~ dmnorm(Mu[site, ], Tau[, ])
         for (species in 1:n_species) {
-          Mu[site, species] <- 
+          Mu[site, species] <-
             inprod(Beta_raw[species, ], X[site, ])
           Y[site, species] ~ dbern(P[site, species])
           P[site, species] <- step(Z[site, species])
@@ -102,6 +102,12 @@ msm_jags <- function(y, sites, x, species, n_species, traits, data, site_re,
       for (species in 1:n_species) {
         for (k in 1:K) {
           Beta_raw[species, k] ~ dnorm(mu_raw[k], tau[k])
+          Beta[species, k] <- Beta_raw[species, k] /
+            sqrt(Sigma[species, species])
+        }
+        for (species_ in 1:n_species) {
+          Rho[species, species_] <- Sigma[species, species_] /
+            (sqrt(Sigma[species, species]) * sqrt(Sigma[species_, species_]))
         }
       }
       for (k in 1:K) {
@@ -110,6 +116,7 @@ msm_jags <- function(y, sites, x, species, n_species, traits, data, site_re,
         sigma_raw[k] ~ dunif(0, 100)
       }
       Tau[1:n_species, 1:n_species] ~ dwish(I[, ], df)
+      Sigma <- inverse(Tau)
     }
   
   Y <-
@@ -140,7 +147,7 @@ msm_jags <- function(y, sites, x, species, n_species, traits, data, site_re,
     base::rep(3)
 
   parameters.to.save <-
-    c('Beta_raw', 'Tau')
+    c('Beta', 'Rho', 'Mu')
   
   base::list(
     Y = Y,
