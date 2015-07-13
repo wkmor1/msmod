@@ -1,10 +1,10 @@
-Package: msm
+Package: msmod
 Title: Fit multispecies models
-Version: 0.0.0.9022
+Version: 0.0.0.9023
 Authors@R: person(c("William", "Keith"), "Morris", email = "wkmor1@gmail.com", role = c("aut", "cre"))
 Description: Functions to fit multispecies models.
 Depends: 
-    R (>= 3.2.0), 
+    R (>= 3.2.0),
     lme4 (>= 1.1-7),
     R2jags (>= 0.5-6),
     ggplot2 (>= 1.0.1)
