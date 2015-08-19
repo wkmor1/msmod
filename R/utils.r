@@ -15,7 +15,7 @@ is_glmerMod <- function(x) {
   magrittr::not(.) %>%
   {
     if (.) {
-      "x must object of class 'glmerMod'" %>%
+      "x must be object of class 'glmerMod'" %>%
      base::stop(call. = FALSE)
     }
   }
