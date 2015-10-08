@@ -1,0 +1,32 @@
+msm_glmer <- function(y, sites, x, species, n_species, traits, data, site_re,
+                      dots)
+{
+  ' %s ~ %s + %s + (1 + %s | %s)' %>%
+    base::paste0(
+      site_re %>%
+        dplyr::first(.) %>%
+        base::ifelse(' + (1 | %s)', '')
+    ) %>%
+    base::sprintf(
+      y,
+      x %>%
+        base::paste(collapse = ' + '),
+      x %>%
+        base::expand.grid(traits) %>%
+        base::do.call(
+          function(...) base::paste(..., sep = ':'), .
+        ) %>%
+        base::unlist(.) %>%
+        base::paste(collapse = ' + '),
+      x %>%
+        base::paste(collapse = ' + '),
+      species,
+      sites
+    ) %>%
+    stats::formula(.) %>%
+    base::list(data) %>%
+    magrittr::set_names(c('formula', 'data')) %>%
+    bind_if_not_in(dots, 'family', stats::binomial) %>%
+    base::c(dots) %>%
+    eval_with_args(lme4::glmer)
+}
