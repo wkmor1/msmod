@@ -353,8 +353,9 @@ msm_stan <- function(y, sites, x, species, n_species, data, dots)
   y %<>%
     dplyr::select_(data, .) %>%
     base::unlist(.) %>%
+    base::as.integer(.) %>%
     base::matrix(ncol = n_species)
-
+  
   K <-
     x %>%
     base::length(.) %>%
@@ -373,12 +374,16 @@ msm_stan <- function(y, sites, x, species, n_species, data, dots)
             magrittr::subtract(1) %>%
             base::seq_len(.)
         )
-    )
+    ) %>%
+    base::as.matrix(.)
 
   N <- base::nrow(y)
   D <- n_species
-
-  base::list(base::c("K", "D", "N", "y", "x")) %>%
+  
+  old <- base::options(mc.cores = parallel::detectCores())
+  base::on.exit(base::options(old), add = TRUE)
+  
+  base::list(K = K, D = D, N = N, y = y, x = x) %>%
   base::list(model) %>%
   magrittr::set_names(c('data', 'model_code')) %>%  
   bind_if_not_in(dots, 'chains', 4) %>%
