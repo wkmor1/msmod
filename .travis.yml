@@ -1,6 +1,5 @@
 language: r
 sudo: required
-apt_packages: 
+apt_packages:
  - jags
 env: CXX_OLEVEL=3
-
