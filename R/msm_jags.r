@@ -175,5 +175,5 @@ msm_jags <- function(y, sites, x, species, n_species, traits, data, site_re,
     bind_if_not_in(dots, 'n.iter', 200) %>%
     bind_if_not_in(dots, 'DIC', FALSE) %>%
     base::c(dots) %>%
-    eval_with_args(R2jags::jags)
+    eval_with_args(R2jags::jags.parallel)
 }
