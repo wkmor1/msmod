@@ -2,7 +2,8 @@ language: r
 sudo: required
 
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq jags
+ - sudo apt-get update -qq
+ - sudo apt-get install -qq jags
 
-env: CXX_OLEVEL=3
+r_binary_packages:
+ - rstan
