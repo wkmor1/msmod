@@ -1,6 +1,6 @@
 Package: msmod
-Title: Fit multispecies models
-Version: 0.0.0.9028
+Title: Fit Multispecies Models
+Version: 0.0.0.9030
 Authors@R: person(c("William", "Keith"), "Morris", email = "wkmor1@gmail.com", role = c("aut", "cre"))
 Description: Functions to fit multispecies models.
 Depends: 
