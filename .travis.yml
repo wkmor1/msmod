@@ -1,8 +1,13 @@
 language: r
 sudo: required
+<<<<<<< HEAD
 
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq jags
  
+=======
+apt_packages:
+ - jags
+>>>>>>> 9710c951ed3834c228241d7a5c7cf5a1db3f82e7
 env: CXX_OLEVEL=3
