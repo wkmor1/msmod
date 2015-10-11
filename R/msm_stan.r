@@ -1,6 +1,6 @@
 msm_stan <- function(y, sites, x, species, n_species, data, type, dots)
 {
-  if (type == 'mstm') {
+  if (identical(type, 'mstm')) {
     stop('mstm models currently only implemented with method = "glmer"')
   }
 
@@ -82,7 +82,7 @@ msm_stan <- function(y, sites, x, species, n_species, data, type, dots)
 
   generated quantities {
     corr_matrix[D] Omega;
-    Omega <- multiply_lower_tri_self_transpose(L_Omega);  
+    Omega <- multiply_lower_tri_self_transpose(L_Omega);
   }"
 
   y %<>%
@@ -117,7 +117,7 @@ msm_stan <- function(y, sites, x, species, n_species, data, type, dots)
 
   base::list(K = K, D = D, N = N, y = y, x = x) %>%
   base::list(model) %>%
-  magrittr::set_names(c('data', 'model_code')) %>%  
+  magrittr::set_names(c('data', 'model_code')) %>%
   bind_if_not_in(dots, 'chains', 4) %>%
   bind_if_not_in(dots, 'iter', 400) %>%
   base::c(dots) %>%

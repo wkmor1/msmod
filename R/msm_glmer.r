@@ -1,6 +1,8 @@
 msm_glmer <- function(y, sites, x, species, n_species, traits, data, site_re, type, dots)
 {
-  if (type == "jsdm") stop('mstm models currently only implemented with method = "jags" or method = "stan"')
+  if (identical(type, "jsdm")) {
+    stop('mstm models currently only implemented with method = "jags" or method = "stan"')
+  }
 
   " %s ~ %s + %s + (1 + %s | %s)" %>%
     base::paste0(

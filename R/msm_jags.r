@@ -1,14 +1,14 @@
 msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
 {
-  if (type == 'mstm') {
+  if (identical(type, 'mstm')) {
     stop('mstm models currently only implemented with method = "glmer"')
   }
-  
+
   serial <- is.null(dots$n.cluster)
 
   if (serial) {
     jags_fn <- "R2jags::jags"
-  } else { 
+  } else {
     jags_fn <- "R2jags::jags.parallel"
   }
 
@@ -42,18 +42,18 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
       Tau ~ dwish(I, df)
       Sigma <- inverse(Tau)
     }
-  
+
   Y <-
     y %>%
     dplyr::select_(data, .) %>%
     base::unlist(.) %>%
     base::matrix(ncol = n_species)
-  
+
   K <-
     x %>%
     base::length(.) %>%
     magrittr::add(1)
-  
+
   X <-
     data %>%
     dplyr::distinct_(sites) %>%
@@ -82,7 +82,7 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
             Y %>%
             magrittr::subtract(.5),
           Beta_raw = Beta_raw,
-          mu = 
+          mu =
             base::colMeans(Beta_raw),
           Tau =
             n_species %>%
@@ -96,13 +96,13 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
   parameters.to.save <-
     c('Beta', 'sigma', 'Rho')
 
-  if (!serial) dots$export_obj_names <- c('n_species', 'K', 'Y') 
+  if (!serial) dots$export_obj_names <- c('n_species', 'K', 'Y')
 
   base::list(
     Y = Y,
     X = X,
     K = K,
-    n_species = 
+    n_species =
       n_species,
     n_sites =
       X %>%
