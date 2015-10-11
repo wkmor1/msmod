@@ -17,8 +17,6 @@
 #'   eucs, family = binomial(link = 'probit'))
 #' msm_jags <- msm('present', 'plot', 'logit_rock', 'species', data = eucs, type = 'jsdm',
 #'   method = 'jags')
-#' msm_stan <- msm('present', 'plot', 'logit_rock', 'species', data = eucs, type = 'jsdm',
-#'   method = 'stan')
 #' @export
 msm <- function(y, sites, x, species, traits, data, site_re = FALSE,
   type = c("mstm", "jsdm"),
@@ -28,12 +26,12 @@ msm <- function(y, sites, x, species, traits, data, site_re = FALSE,
   x %<>% dplyr::select_vars_(base::names(data), .)
 
   unscaled_data <- x
-  
+
   if (!missing(traits)) {
     traits %<>% dplyr::select_vars_(base::names(data), .)
     unscaled_data %<>% base::c(traits)
   }
-    
+
   data %<>%
     dplyr::mutate_each_(
       dplyr::funs(
@@ -64,6 +62,5 @@ msm <- function(y, sites, x, species, traits, data, site_re = FALSE,
   )
 }
 
-c("n_sites", "inprod", "Z", "pow", "inverse",
-  "Tau", "B_raw", "G_raw_", "xi", "Tau_B") %>%
+c("n_sites", "inprod", "Z", "pow", "inverse", "Tau", "Beta_raw") %>%
 utils::globalVariables(.)
