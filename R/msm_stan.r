@@ -1,4 +1,9 @@
-msm_stan <- function(y, sites, x, species, n_species, data, dots) {
+msm_stan <- function(y, sites, x, species, n_species, data, type, dots)
+{
+  if (type == 'mstm') {
+    stop('mstm models currently only implemented with method = "glmer"')
+  }
+
   model <- "
     functions {
       int sum(int[,] a) {
@@ -50,14 +55,14 @@ msm_stan <- function(y, sites, x, species, n_species, data, dots) {
       }
     }
   }
-  
+
   parameters {
     matrix[D, K] beta;
     cholesky_factor_corr[D] L_Omega;
     vector<lower=0>[N_pos] z_pos;
     vector<upper=0>[N_neg] z_neg;
   }
-  
+
   transformed parameters {
     vector[D] z[N];
     for (n in 1:N_pos)
@@ -65,7 +70,7 @@ msm_stan <- function(y, sites, x, species, n_species, data, dots) {
     for (n in 1:N_neg)
       z[n_neg[n], d_neg[n]] <- z_neg[n];
   }
-  
+
   model {
     vector[D] beta_x[N];
     to_vector(beta) ~ cauchy(0, 2.5);
@@ -74,23 +79,23 @@ msm_stan <- function(y, sites, x, species, n_species, data, dots) {
       beta_x[n] <- beta * x[n];
       z ~ multi_normal_cholesky(beta_x, L_Omega);
   }
-  
+
   generated quantities {
     corr_matrix[D] Omega;
     Omega <- multiply_lower_tri_self_transpose(L_Omega);  
   }"
-  
+
   y %<>%
     dplyr::select_(data, .) %>%
     base::unlist(.) %>%
     base::as.integer(.) %>%
     base::matrix(ncol = n_species)
-  
+
   K <-
     x %>%
     base::length(.) %>%
     magrittr::add(1)
-  
+
   x <-
     data %>%
     dplyr::distinct_(sites) %>%
@@ -106,18 +111,15 @@ msm_stan <- function(y, sites, x, species, n_species, data, dots) {
         )
     ) %>%
     base::as.matrix(.)
-  
+
   N <- base::nrow(y)
   D <- n_species
-  
-  old <- base::options(mc.cores = parallel::detectCores())
-  base::on.exit(base::options(old), add = TRUE)
-  
+
   base::list(K = K, D = D, N = N, y = y, x = x) %>%
   base::list(model) %>%
   magrittr::set_names(c('data', 'model_code')) %>%  
   bind_if_not_in(dots, 'chains', 4) %>%
   bind_if_not_in(dots, 'iter', 400) %>%
   base::c(dots) %>%
-  eval_with_args(rstan::stan)
+  eval_with_args("rstan::stan")
 }
