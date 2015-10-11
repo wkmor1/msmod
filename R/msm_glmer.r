@@ -1,20 +1,21 @@
-msm_glmer <- function(y, sites, x, species, n_species, traits, data, site_re,
-                      dots)
+msm_glmer <- function(y, sites, x, species, n_species, traits, data, site_re, type, dots)
 {
-  ' %s ~ %s + %s + (1 + %s | %s)' %>%
+  if (type == "jsdm") stop('mstm models currently only implemented with method = "jags" or method = "stan"')
+
+  " %s ~ %s + %s + (1 + %s | %s)" %>%
     base::paste0(
       site_re %>%
         dplyr::first(.) %>%
-        base::ifelse(' + (1 | %s)', '')
+        base::ifelse(" + (1 | %s)", "")
     ) %>%
     base::sprintf(
       y,
       x %>%
-        base::paste(collapse = ' + '),
+        base::paste(collapse = " + "),
       x %>%
         base::expand.grid(traits) %>%
         base::do.call(
-          function(...) base::paste(..., sep = ':'), .
+          function(...) base::paste(..., sep = ":"), .
         ) %>%
         base::unlist(.) %>%
         base::paste(collapse = ' + '),
@@ -28,5 +29,5 @@ msm_glmer <- function(y, sites, x, species, n_species, traits, data, site_re,
     magrittr::set_names(c('formula', 'data')) %>%
     bind_if_not_in(dots, 'family', stats::binomial) %>%
     base::c(dots) %>%
-    eval_with_args(lme4::glmer)
+    eval_with_args("lme4::glmer")
 }
