@@ -5,5 +5,5 @@ before_install:
  - sudo apt-get update -qq
  - sudo apt-get install -qq jags
 
-r_binary_packages:
+r_packages:
  - rstan
