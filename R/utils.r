@@ -8,20 +8,6 @@
 # to use magrittr shortcut
 utils::globalVariables(".")
 
-# Check if a glmerMod class
-is_glmerMod <- function(x) {
-  x %>%
-  base::class(.) %>% 
-  magrittr::equals("glmerMod") %>%
-  magrittr::not(.) %>%
-  {
-    if (.) {
-      "x must be object of class 'glmerMod'" %>%
-     base::stop(call. = FALSE)
-    }
-  }
-}
-
 # magrittr like functions to return something else if condition is not met
 return_if_not <- function(x, test, y) {
   if (test) y else x
@@ -39,7 +25,7 @@ bind_if_not_in <- function(x, y, z, out=base::get(z, parent.frame())) {
   )
 }
 
-# evaluate a function with a list of named arguments (do.call doesnt keep 
+# evaluate a function with a list of named arguments (do.call doesnt keep
 # the names.)
 eval_with_args <- function(args, fun) {
   base::names(args) %>%
