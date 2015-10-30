@@ -14,30 +14,49 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
 
   model <-
     function() {
-      for (site in 1:n_sites) {
-        Z[site, 1:n_species] ~ dmnorm(Mu[site, ], Tau)
-        for (species in 1:n_species) {
-          Mu[site, species] <- inprod(Beta_raw[species, ], X[site, ])
-          Y[site, species] ~ dbern(step(Z[site, species]))
+      for (i in 1:n) {
+        Z[i, 1:J] ~ dmnorm(Mu[i, ], Tau)
+        for (j in 1:J) {
+          Mu[i, j] <- inprod(B_raw[j, ], X[i, ])
+          Y[i, j] ~ dbern(step(Z[i, j]))
         }
       }
-      for (species in 1:n_species) {
-        sigma_[species] <- sqrt(Sigma[species, species])
+      for (j in 1:J) {
+        sigma_[j] <- sqrt(Sigma[j, j])
         for (k in 1:K) {
-          Beta_raw[species, k] ~ dnorm(mu[k], tau[k])
-          Beta[species, k] <- Beta_raw[species, k] / sigma_[species]
+          B_raw[j, k] ~ dnorm(mu[k], tau[k])
+          B[j, k] <- B_raw[j, k] / sigma_[j]
         }
-        for (species_ in 1:n_species) {
-          Rho[species, species_] <-
-            Sigma[species, species_] / pow(sigma_[species], 2)
-          EnvRho[species, species_] <-
-            sum(Beta[species, ] * Beta[species_, ])
+        for (j_ in 1:J) {
+          Rho[j, j_] <- Sigma[j, j_] / pow(sigma_[j], 2)
+          for (k in 1:K) {
+            for (k_ in 1:K) {
+              num_[k, k_, j, j_] <- B[j, k] * B[j_, k_] *
+                ifelse(k_ != k, covx[k, k_], 0)
+              dem1_[k, k_, j, j_] <- B[j, k] * B[j, k_] *
+                ifelse(k_ != k, covx[k, k_], 0)
+              dem2_[k, k_, j, j_] <- B[j_, k] * B[j_, k_] *
+                ifelse(k_ != k, covx[k, k_], 0)
+            }
+            num[k, j, j_] <- B[j, k] * B[j_, k] * sum(num_[, , j, j_])
+            dem1[k, j, j_] <- B[j, k] * B[j, k] * sum(dem1_[, , j, j_])
+            dem2[k, j, j_] <- B[j_, k] * B[j_, k] * sum(dem2_[, , j, j_])
+          }
+          EnvRho[j, j_] <- sum(num[, j, j_]) /
+            sqrt(sum(dem1[, j, j_]) * sum(dem2[, j, j_]))
         }
       }
       for (k in 1:K) {
         mu[k] ~ dnorm(0, .001)
         tau[k] <- pow(sigma[k], -2)
-        sigma[k]  ~ dunif(0, 100)
+        sigma[k] ~ dunif(0, 100)
+        for (k_ in 1:K) {
+          for (i in 1:n) {
+            covx_[i, k, k_] <-
+              (X[i, k] - mean(X[, k])) * (X[i, k_] - mean(X[, k_]))
+          }
+          covx[k, k_] <- mean(covx_[, k, k_])
+        }
       }
       Tau ~ dwish(I, df)
       Sigma <- inverse(Tau)
@@ -57,7 +76,7 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
   X <-
     data %>%
     dplyr::distinct_(sites) %>%
-    dplyr::select_(x) %>%
+    dplyr::select_(.dots = x) %>%
     magrittr::inset2('(Intercept)', value = 1) %>%
     base::subset(
       select =
@@ -72,7 +91,7 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
   inits <-
     function(x)
       {
-        Beta_raw =
+        B_raw =
           n_species %>%
           magrittr::multiply_by(K) %>%
           stats::rnorm(.) %>%
@@ -81,9 +100,9 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
           Z =
             Y %>%
             magrittr::subtract(.5),
-          Beta_raw = Beta_raw,
+          B_raw = B_raw,
           mu =
-            base::colMeans(Beta_raw),
+            base::colMeans(B_raw),
           Tau =
             n_species %>%
             base::diag(.),
@@ -94,7 +113,7 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
       }
 
   parameters.to.save <-
-    c('Beta', 'sigma', 'Rho')
+    c('B', 'sigma', 'Rho', 'EnvRho')
 
   if (!serial) dots$export_obj_names <- c('n_species', 'K', 'Y')
 
@@ -102,9 +121,9 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
     Y = Y,
     X = X,
     K = K,
-    n_species =
+    J =
       n_species,
-    n_sites =
+    n =
       X %>%
       base::NROW(.),
     I =
