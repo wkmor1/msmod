@@ -29,8 +29,8 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
         }
         for (j_ in 1:J) {
           Rho[j, j_] <- Sigma[j, j_] / pow(sigma_[j], 2)
-          for (k in 1:K) {
-            for (k_ in 1:K) {
+          for (k in 2:K) {
+            for (k_ in 2:K) {
               num_[k, k_, j, j_] <- B[j, k] * B[j_, k_] *
                 ifelse(k_ != k, covx[k, k_], 0)
               dem1_[k, k_, j, j_] <- B[j, k] * B[j, k_] *

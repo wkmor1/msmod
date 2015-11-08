@@ -1,6 +1,6 @@
 Package: msmod
 Title: Fit Multispecies Models
-Version: 0.0.0.9038
+Version: 0.0.0.9039
 Authors@R: person(c("William", "Keith"), "Morris", email = "wkmor1@gmail.com", role = c("aut", "cre"))
 Description: Functions to fit multispecies models.
 Depends:
@@ -19,3 +19,4 @@ Imports:
 Suggests:
     knitr
 VignetteBuilder: knitr
+RoxygenNote: 5.0.0
