@@ -31,16 +31,16 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
           Rho[j, j_] <- Sigma[j, j_] / pow(sigma_[j], 2)
           for (k in 2:K) {
             for (k_ in 2:K) {
-              num_[k, k_, j, j_] <- B[j, k] * B[j_, k_] *
+              num_[k - 1, k_ - 1, j, j_] <- B[j, k] * B[j_, k_] *
                 ifelse(k_ != k, covx[k, k_], 0)
-              dem1_[k, k_, j, j_] <- B[j, k] * B[j, k_] *
+              dem1_[k - 1, k_ - 1, j, j_] <- B[j, k] * B[j, k_] *
                 ifelse(k_ != k, covx[k, k_], 0)
-              dem2_[k, k_, j, j_] <- B[j_, k] * B[j_, k_] *
+              dem2_[k - 1, k_ - 1, j, j_] <- B[j_, k] * B[j_, k_] *
                 ifelse(k_ != k, covx[k, k_], 0)
             }
-            num[k, j, j_] <- B[j, k] * B[j_, k] * sum(num_[, , j, j_])
-            dem1[k, j, j_] <- B[j, k] * B[j, k] * sum(dem1_[, , j, j_])
-            dem2[k, j, j_] <- B[j_, k] * B[j_, k] * sum(dem2_[, , j, j_])
+            num[k - 1, j, j_] <- B[j, k] * B[j_, k] * sum(num_[, , j, j_])
+            dem1[k - 1, j, j_] <- B[j, k] * B[j, k] * sum(dem1_[, , j, j_])
+            dem2[k - 1, j, j_] <- B[j_, k] * B[j_, k] * sum(dem2_[, , j, j_])
           }
           EnvRho[j, j_] <- sum(num[, j, j_]) /
             sqrt(sum(dem1[, j, j_]) * sum(dem2[, j, j_]))
