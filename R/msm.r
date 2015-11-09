@@ -47,7 +47,7 @@ msm <- function(y, sites, x, species, traits, data, site_re = FALSE,
     base::nrow(.)
 
   dots <-
-    list(...)
+    base::list(...)
 
   base::match.arg(method) %>%
   base::switch(
@@ -60,5 +60,5 @@ msm <- function(y, sites, x, species, traits, data, site_re = FALSE,
   )
 }
 
-c("n_sites", "inprod", "Z", "pow", "inverse", "Tau", "Beta_raw") %>%
+base::c("n_sites", "inprod", "Z", "pow", "inverse", "Tau", "Beta_raw") %>%
 utils::globalVariables(.)
