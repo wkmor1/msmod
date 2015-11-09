@@ -55,6 +55,8 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
       Sigma <- inverse(Tau)
     }
 
+  J <- n_species
+
   Y <-
     y %>%
     dplyr::select_(data, .) %>%
@@ -106,16 +108,16 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
       }
 
   parameters.to.save <-
-    c('B', 'sigma', 'Rho', 'EnvRho')
+    base::c('B', 'sigma', 'Rho', 'EnvRho')
 
-  if (!serial) dots$export_obj_names <- c('n_species', 'K', 'Y')
+  if (!serial) dots$export_obj_names <- base::c('J', 'K', 'Y')
 
   base::list(
     Y    = Y,
     X    = X,
     covx = stats::cov(X),
     K    = K,
-    J    = n_species,
+    J    = J,
     n    =
            X %>%
            base::NROW(.),
