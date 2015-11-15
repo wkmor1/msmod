@@ -3,5 +3,4 @@
 export(coef_plot)
 export(msm)
 export(te_plot)
-importFrom(magrittr,"%<>%")
-importFrom(magrittr,"%>%")
+importFrom(dplyr,"%>%")
