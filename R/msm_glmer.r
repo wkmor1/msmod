@@ -30,6 +30,8 @@ msm_glmer <- function(y, sites, x, species, n_species, traits, data, site_re, ty
     base::list(data) %>%
     magrittr::set_names(c('formula', 'data')) %>%
     bind_if_not_in(dots, 'family', stats::binomial) %>%
+    bind_if_not_in(dots, 'control',
+      lme4::glmerControl(optimizer = "bobyqa")) %>%
     base::c(dots) %>%
     eval_with_args("lme4::glmer")
 }
