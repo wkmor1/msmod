@@ -1,5 +1,4 @@
-#' @importFrom magrittr %>%
-#' @importFrom magrittr %<>%
+#' @importFrom dplyr %>%
 
 # to use magrittr shortcut
 utils::globalVariables(".")

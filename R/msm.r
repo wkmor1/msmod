@@ -23,14 +23,15 @@ msm <- function(y, sites, x, species, traits, data, site_re = FALSE,
   method = c("glmer", "jags", "stan"),
   ...)
 {
-  x %<>% dplyr::select_vars_(base::names(data), .)
+  x <- x %>% dplyr::select_vars_(base::names(data), .)
 
   if (!missing(traits)) {
-    traits %<>% dplyr::select_vars_(base::names(data), .)
-    x %<>% base::c(traits)
+    traits <- traits %>% dplyr::select_vars_(base::names(data), .)
+    x <- x %>% base::c(traits)
   }
 
-  data %<>%
+  data <-
+    data %>%
     dplyr::mutate_each_(
       dplyr::funs(
         base::scale(.) %>%

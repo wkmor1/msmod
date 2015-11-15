@@ -52,7 +52,8 @@ setMethod(
           c(int)
       )
 
-    fixefs %<>%
+    fixefs <-
+      fixefs %>%
       magrittr::extract(k)
 
     se_fixefs <-
@@ -126,7 +127,8 @@ setMethod(
       x %>%
       arm::sim(nsims)
 
-    nsims %<>%
+    nsims <-
+      nsims %>%
       magrittr::multiply_by(.95) %>%
       base::as.integer(.)
 
@@ -134,7 +136,8 @@ setMethod(
       sim %>%
       methods::slot('fixef')
 
-    sim %<>%
+    sim <-
+      sim %>%
       methods::slot('ranef') %>%
       magrittr::extract2(species) %>%
       magrittr::extract(, , x_var) %>%

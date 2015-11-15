@@ -16,76 +16,77 @@ msm_stan <- function(y, sites, x, species, n_species, data, type, dots)
       }
     }
 
-  data {
-    int<lower=1> K;
-    int<lower=1> D;
-    int<lower=0> N;
-    int<lower=0, upper=1> y[N, D];
-    vector[K] x[N];
-  }
+    data {
+      int<lower=1> K;
+      int<lower=1> D;
+      int<lower=0> N;
+      int<lower=0, upper=1> y[N, D];
+      vector[K] x[N];
+    }
 
-  transformed data {
-    int<lower=0> N_pos;
-    int<lower=1, upper=N> n_pos[sum(y)];
-    int<lower=1, upper=D> d_pos[size(n_pos)];
-    int<lower=0> N_neg;
-    int<lower=1,upper=N> n_neg[(N * D) - size(n_pos)];
-    int<lower=1,upper=D> d_neg[size(n_neg)];
+    transformed data {
+      int<lower=0> N_pos;
+      int<lower=1, upper=N> n_pos[sum(y)];
+      int<lower=1, upper=D> d_pos[size(n_pos)];
+      int<lower=0> N_neg;
+      int<lower=1,upper=N> n_neg[(N * D) - size(n_pos)];
+      int<lower=1,upper=D> d_neg[size(n_neg)];
 
-    N_pos <- size(n_pos);
-    N_neg <- size(n_neg);
+      N_pos <- size(n_pos);
+      N_neg <- size(n_neg);
 
-    {
-      int i;
-      int j;
-      i <- 1;
-      j <- 1;
-      for (n in 1:N) {
-        for (d in 1:D) {
-          if (y[n, d] == 1) {
-            n_pos[i] <- n;
-            d_pos[i] <- d;
-            i <- i + 1;
-          } else {
-            n_neg[j] <- n;
-            d_neg[j] <- d;
-            j <- j + 1;
+      {
+        int i;
+        int j;
+        i <- 1;
+        j <- 1;
+        for (n in 1:N) {
+          for (d in 1:D) {
+            if (y[n, d] == 1) {
+              n_pos[i] <- n;
+              d_pos[i] <- d;
+              i <- i + 1;
+            } else {
+              n_neg[j] <- n;
+              d_neg[j] <- d;
+              j <- j + 1;
+            }
           }
         }
       }
     }
-  }
 
-  parameters {
-    matrix[D, K] beta;
-    cholesky_factor_corr[D] L_Omega;
-    vector<lower=0>[N_pos] z_pos;
-    vector<upper=0>[N_neg] z_neg;
-  }
+    parameters {
+      matrix[D, K] beta;
+      cholesky_factor_corr[D] L_Omega;
+      vector<lower=0>[N_pos] z_pos;
+      vector<upper=0>[N_neg] z_neg;
+    }
 
-  transformed parameters {
-    vector[D] z[N];
-    for (n in 1:N_pos)
-      z[n_pos[n], d_pos[n]] <- z_pos[n];
-    for (n in 1:N_neg)
-      z[n_neg[n], d_neg[n]] <- z_neg[n];
-  }
+    transformed parameters {
+      vector[D] z[N];
+      for (n in 1:N_pos)
+        z[n_pos[n], d_pos[n]] <- z_pos[n];
+      for (n in 1:N_neg)
+        z[n_neg[n], d_neg[n]] <- z_neg[n];
+    }
 
-  model {
-    vector[D] beta_x[N];
-    to_vector(beta) ~ cauchy(0, 2.5);
-    L_Omega ~ lkj_corr_cholesky(1);
-    for (n in 1:N)
-      beta_x[n] <- beta * x[n];
-      z ~ multi_normal_cholesky(beta_x, L_Omega);
-  }
+    model {
+      vector[D] beta_x[N];
+      to_vector(beta) ~ cauchy(0, 2.5);
+      L_Omega ~ lkj_corr_cholesky(1);
+      for (n in 1:N)
+        beta_x[n] <- beta * x[n];
+        z ~ multi_normal_cholesky(beta_x, L_Omega);
+    }
 
-  generated quantities {
-    corr_matrix[D] Omega;
-    Omega <- multiply_lower_tri_self_transpose(L_Omega);
-  }"
-
-  y %<>%
+    generated quantities {
+      corr_matrix[D] Omega;
+      Omega <- multiply_lower_tri_self_transpose(L_Omega);
+    }
+  "
+  y <-
+    y %>%
     dplyr::select_(data, .) %>%
     base::unlist(.) %>%
     base::as.integer(.) %>%
