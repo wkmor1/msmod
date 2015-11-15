@@ -1,6 +1,6 @@
 Package: msmod
 Title: Fit Multispecies Models
-Version: 0.0.0.9053
+Version: 0.0.0.9054
 Authors@R: person(c("William", "Keith"), "Morris", email = "wkmor1@gmail.com", role = c("aut", "cre"))
 Description: Functions to fit multispecies models.
 Depends:
@@ -12,6 +12,7 @@ Imports:
     dplyr,
     ggplot2,
     lme4,
+    magrittr,
     MASS,
     mclust,
     methods,

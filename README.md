@@ -14,7 +14,6 @@ devtools::install_github('wkmor1/msmod')
 Fit a multispecies trait model
 ```R
 library(msmod)
-data(eucs)
 head(eucs)
 ```
 ```
