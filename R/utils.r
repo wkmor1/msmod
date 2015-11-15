@@ -1,3 +1,5 @@
+#' @import R2jags
+#' @import rstan
 #' @importFrom dplyr %>%
 
 # to use magrittr shortcut
