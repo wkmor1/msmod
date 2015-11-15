@@ -16,6 +16,7 @@ setGeneric(
   }
 )
 
+#' @describeIn te_plot Trait environment plot for glmer model
 setMethod(
   "te_plot",
   c(x = 'glmerMod'),

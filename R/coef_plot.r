@@ -13,6 +13,7 @@ setGeneric(
   }
 )
 
+#' @describeIn coef_plot coefficient plot for glmer model
 setMethod(
   "coef_plot",
   c(x = 'glmerMod'),
