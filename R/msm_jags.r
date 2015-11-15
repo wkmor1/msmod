@@ -10,6 +10,8 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
     jags_fn <- "R2jags::jags"
   } else {
     jags_fn <- "R2jags::jags.parallel"
+    dots$export_obj_names <- base::c('J', 'K', 'Y', 'X', 'I', 'df', 'n')
+    dots$envir <- base::environment()
   }
 
   model <-
@@ -23,27 +25,22 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
       }
       for (j in 1:J) {
         sigma_[j] <- sqrt(Sigma[j, j])
+        env_sigma_[j] <- sqrt(EnvSigma[j, j])
         for (k in 1:K) {
           B_raw[j, k] ~ dnorm(mu[k], tau[k])
           B[j, k] <- B_raw[j, k] / sigma_[j]
         }
         for (j_ in 1:J) {
-          Rho[j, j_] <- Sigma[j, j_] / pow(sigma_[j], 2)
-          for (k in 1:K) {
-            for (k_ in 1:K) {
-              num_[k, k_, j, j_] <- B[j, k] * B[j_, k_] *
-                ifelse(k_ != k, covx[k, k_], 0)
-              den1_[k, k_, j, j_] <- B[j, k] * B[j, k_] *
-                ifelse(k_ != k, covx[k, k_], 0)
-              den2_[k, k_, j, j_] <- B[j_, k] * B[j_, k_] *
-                ifelse(k_ != k, covx[k, k_], 0)
+          Rho[j, j_] <- Sigma[j, j_] / (sigma_[j] * sigma_[j_])
+          EnvSigma[j, j_] <- sum(EnvSigma1[, j, j_]) + sum(EnvSigma2[, , j, j_])
+          EnvRho[j, j_] <- EnvSigma[j, j_] / (env_sigma_[j] * env_sigma_[j_])
+          for (k in 2:K) {
+            EnvSigma1[k - 1, j, j_] <- B[j, k] * B[j_, k]
+            for (k_ in 2:K) {
+              EnvSigma2[k - 1, k_ - 1, j, j_] <-
+                B[j, k] * B[j_, k_] * ifelse(k_ != k, covx[k, k_], 0)
             }
-            num[k, j, j_]  <- B[j, k]  * B[j_, k] + sum(num_[, , j, j_])
-            den1[k, j, j_] <- B[j, k]  * B[j, k]  + sum(den1_[, , j, j_])
-            den2[k, j, j_] <- B[j_, k] * B[j_, k] + sum(den2_[, , j, j_])
           }
-          EnvRho[j, j_] <- sum(num[, j, j_]) /
-            sqrt(sum(den1[, j, j_]) * sum(den2[, j, j_]))
         }
       }
       for (k in 1:K) {
@@ -79,61 +76,78 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
         base::c(
           {.} %>%
             magrittr::subtract(1) %>%
-            base::seq_len(.)
+            base::seq_len()
         )
-    )
+    ) %>%
+    base::as.matrix()
 
-  inits <-
-    function(x)
-      {
-        B_raw =
-          n_species %>%
-          magrittr::multiply_by(K) %>%
-          stats::rnorm(.) %>%
-          base::matrix(n_species, K)
-        base::list(
-          Z =
-            Y %>%
-            magrittr::subtract(.5),
-          B_raw = B_raw,
-          mu =
-            base::colMeans(B_raw),
-          Tau =
-            n_species %>%
-            base::diag(.),
-          sigma =
-            K %>%
-            base::rep(1, .)
-        )
-      }
+  df <-
+    n_species %>%
+    magrittr::add(1)
+
+  I <-
+    n_species %>%
+    base::diag()
+
+  n <-
+    X %>%
+    base::NROW()
+
+  inits <- function() {
+    Tau <-
+      stats::rWishart(1, df, I)[, ,1]
+    Sigma <-
+      base::solve(Tau)
+    Z <-
+      base::rep(0, n_species) %>%
+      MASS::mvrnorm(1, ., Sigma) %>%
+      base::replicate(n, .) %>%
+      base::t() %>%
+      base::abs() %>%
+      {base::ifelse(base::as.matrix(Y), ., -.)}
+    Sigma <-
+      mclust::mvnXXX(Z)$parameters$variance$sigma[, , 1]
+    B <- base::suppressWarnings({
+      base::sapply(
+        base::seq_len(base::ncol(Y)),
+        function(x) {
+          stats::glm(
+            Y[, x] ~ X[, -1],
+            family = stats::binomial(link = probit)
+          ) %>%
+          stats::coef() %>%
+          base::unname()
+        }
+      ) %>% base::t()
+    })
+    B_raw <- B * sqrt(diag(Sigma))
+    mu <- apply(B_raw, 2, mean)
+    sigma <- apply(B_raw, 2, sd)
+    list(Tau = solve(Sigma), Z = Z, B_raw = B_raw, mu = mu, sigma = sigma)
+  }
 
   parameters.to.save <-
     base::c('B', 'sigma', 'Rho', 'EnvRho')
 
-  if (!serial) dots$export_obj_names <- base::c('J', 'K', 'Y')
+  result <-
+    base::list(
+      Y    = Y,
+      X    = X,
+      covx = stats::cov(X),
+      K    = K,
+      J    = J,
+      n    = n,
+      I    = I,
+      df   = df
+    ) %>%
+    base::list(model) %>%
+    magrittr::set_names(base::c('data', 'model.file')) %>%
+    bind_if_not_in(dots, 'inits') %>%
+    bind_if_not_in(dots, 'parameters.to.save') %>%
+    bind_if_not_in(dots, 'n.iter', 200) %>%
+    bind_if_not_in(dots, 'DIC', FALSE) %>%
+    base::c(dots) %>%
+    eval_with_args(jags_fn)
 
-  base::list(
-    Y    = Y,
-    X    = X,
-    covx = stats::cov(X),
-    K    = K,
-    J    = J,
-    n    =
-           X %>%
-           base::NROW(.),
-    I    =
-           n_species %>%
-           base::diag(.),
-    df   =
-           n_species %>%
-           magrittr::add(1)
-  ) %>%
-  base::list(model) %>%
-  magrittr::set_names(base::c('data', 'model.file')) %>%
-  bind_if_not_in(dots, 'inits') %>%
-  bind_if_not_in(dots, 'parameters.to.save') %>%
-  bind_if_not_in(dots, 'n.iter', 200) %>%
-  bind_if_not_in(dots, 'DIC', FALSE) %>%
-  base::c(dots) %>%
-  eval_with_args(jags_fn)
+  return(result)
 }
