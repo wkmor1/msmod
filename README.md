@@ -37,7 +37,7 @@ msm_glmer <- msm(y = "present", sites = "plot", x = "logit_rock",
   species = "species", traits = "ln_sla", data = eucs, type = "mstm",
   method = "glmer")
 
-msm_glmer
+summary(msm_glmer)
 ```
 ```
 ## Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
