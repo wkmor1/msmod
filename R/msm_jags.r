@@ -1,7 +1,6 @@
-msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
-{
-  if (identical(type, 'mstm')) {
-    stop('mstm models currently only implemented with method = "glmer"')
+msm_jags <- function(y, sites, x, species, n_species, data, type, dots) {
+  if (identical(type, "mstm")) {
+    stop("mstm models currently only implemented with method = \"glmer\"")
   }
 
   serial <- is.null(dots$n.cluster)
@@ -10,7 +9,7 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
     jags_fn <- "R2jags::jags"
   } else {
     jags_fn <- "R2jags::jags.parallel"
-    dots$export_obj_names <- base::c('J', 'K', 'Y', 'X', 'I', 'df', 'n')
+    dots$export_obj_names <- base::c("J", "K", "Y", "X", "I", "df", "n")
     dots$envir <- base::environment()
   }
 
@@ -69,7 +68,7 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
     data %>%
     dplyr::distinct_(sites) %>%
     dplyr::select_(.dots = x) %>%
-    magrittr::inset2('(Intercept)', value = 1) %>%
+    magrittr::inset2("(Intercept)", value = 1) %>%
     base::subset(
       select =
         K %>%
@@ -95,7 +94,7 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
 
   inits <- function() {
     Tau <-
-      stats::rWishart(1, df, I)[, ,1]
+      stats::rWishart(1, df, I)[, , 1]
     Sigma <-
       base::solve(Tau)
     Z <-
@@ -103,8 +102,9 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
       MASS::mvrnorm(1, ., Sigma) %>%
       base::replicate(n, .) %>%
       base::t() %>%
-      base::abs() %>%
-      {base::ifelse(base::as.matrix(Y), ., -.)}
+      base::abs() %>% {
+        base::ifelse(base::as.matrix(Y), ., -.)
+      }
     Sigma <-
       mclust::mvnXXX(Z)$parameters$variance$sigma[, , 1]
     B <- base::suppressWarnings({
@@ -128,7 +128,7 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
   }
 
   parameters.to.save <-
-    base::c('B', 'sigma', 'Rho', 'EnvRho')
+    base::c("B", "sigma", "Rho", "EnvRho")
 
   result <-
     base::list(
@@ -142,11 +142,11 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
       df   = df
     ) %>%
     base::list(model) %>%
-    magrittr::set_names(base::c('data', 'model.file')) %>%
-    bind_if_not_in(dots, 'inits') %>%
-    bind_if_not_in(dots, 'parameters.to.save') %>%
-    bind_if_not_in(dots, 'n.iter', 200) %>%
-    bind_if_not_in(dots, 'DIC', FALSE) %>%
+    magrittr::set_names(base::c("data", "model.file")) %>%
+    bind_if_not_in(dots, "inits") %>%
+    bind_if_not_in(dots, "parameters.to.save") %>%
+    bind_if_not_in(dots, "n.iter", 200) %>%
+    bind_if_not_in(dots, "DIC", FALSE) %>%
     base::c(dots) %>%
     eval_with_args(jags_fn)
 

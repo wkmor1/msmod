@@ -16,13 +16,13 @@ setGeneric(
 #' @describeIn coef_plot coefficient plot for glmer model
 setMethod(
   "coef_plot",
-  c(x = 'glmerMod'),
+  c(x = "glmerMod"),
   function(x) {
     dplyr::data_frame(
       coef =
         x %>%
-        methods::slot('pp') %>%
-        base::get('X', envir = .) %>%
+        methods::slot("pp") %>%
+        base::get("X", envir = .) %>%
         base::colnames(.),
       `Coefficient value` =
         x %>%
@@ -30,9 +30,9 @@ setMethod(
       ci =
         x %>%
         lme4::vcov.merMod(.) %>%
-        methods::slot('factors') %>%
-        base::getElement('correlation') %>%
-        methods::slot('sd') %>%
+        methods::slot("factors") %>%
+        base::getElement("correlation") %>%
+        methods::slot("sd") %>%
         magrittr::multiply_by(1.96)
     ) %>%
 
@@ -46,7 +46,7 @@ setMethod(
         xmax = `Coefficient value` + ci,
         height = 0)
     ) +
-    ggplot2::scale_y_discrete(name = '')
+    ggplot2::scale_y_discrete(name = "")
   }
 )
 

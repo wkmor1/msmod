@@ -1,7 +1,6 @@
-msm_stan <- function(y, sites, x, species, n_species, data, type, dots)
-{
-  if (identical(type, 'mstm')) {
-    stop('mstm models currently only implemented with method = "glmer"')
+msm_stan <- function(y, sites, x, species, n_species, data, type, dots) {
+  if (identical(type, "mstm")) {
+    stop("mstm models currently only implemented with method = \"glmer\"")
   }
 
   model <- "
@@ -101,7 +100,7 @@ msm_stan <- function(y, sites, x, species, n_species, data, type, dots)
     data %>%
     dplyr::distinct_(sites) %>%
     dplyr::select_(x) %>%
-    magrittr::inset2('(Intercept)', value = 1) %>%
+    magrittr::inset2("(Intercept)", value = 1) %>%
     base::subset(
       select =
         K %>%
@@ -118,9 +117,9 @@ msm_stan <- function(y, sites, x, species, n_species, data, type, dots)
 
   base::list(K = K, D = D, N = N, y = y, x = x) %>%
   base::list(model) %>%
-  magrittr::set_names(c('data', 'model_code')) %>%
-  bind_if_not_in(dots, 'chains', 4) %>%
-  bind_if_not_in(dots, 'iter', 400) %>%
+  magrittr::set_names(c("data", "model_code")) %>%
+  bind_if_not_in(dots, "chains", 4) %>%
+  bind_if_not_in(dots, "iter", 400) %>%
   base::c(dots) %>%
   eval_with_args("rstan::stan")
 }

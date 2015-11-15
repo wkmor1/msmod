@@ -3,4 +3,6 @@
 export(coef_plot)
 export(msm)
 export(te_plot)
+import(R2jags)
+import(rstan)
 importFrom(dplyr,"%>%")

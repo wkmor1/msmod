@@ -19,12 +19,12 @@ setGeneric(
 #' @describeIn te_plot Trait environment plot for glmer model
 setMethod(
   "te_plot",
-  c(x = 'glmerMod'),
+  base::c(x = "glmerMod"),
   function(x, x_var, trait, nsims) {
 
     frame <-
       x %>%
-      methods::slot('frame')
+      methods::slot("frame")
 
     species <-
       frame %>%
@@ -32,13 +32,13 @@ setMethod(
       base::rev(.) %>%
       dplyr::nth(
         x %>%
-        methods::slot('flist') %>%
+        methods::slot("flist") %>%
         base::length(.)
       )
 
     int <-
       x_var %>%
-      base::paste0(':', trait)
+      base::paste0(":", trait)
 
     fixefs <-
       x %>%
@@ -59,9 +59,9 @@ setMethod(
     se_fixefs <-
       x %>%
       lme4::vcov.merMod(.) %>%
-      methods::slot('factors') %>%
-      base::getElement('correlation') %>%
-      methods::slot('sd') %>%
+      methods::slot("factors") %>%
+      base::getElement("correlation") %>%
+      methods::slot("sd") %>%
       magrittr::extract(k) %>%
       magrittr::set_names(
         fixefs %>%
@@ -103,7 +103,7 @@ setMethod(
 
     xvals <-
       -1 %>%
-      base::seq(1, length.out=201)
+      base::seq(1, length.out = 201)
 
     yvals <-
       nsims %>%
@@ -118,7 +118,7 @@ setMethod(
         stats::quantile,
         2 %>%
         base::numeric(.),
-        probs=.025 %>%
+        probs = .025 %>%
         base::c(.975)
       ) %>%
       base::t(.)
@@ -134,11 +134,11 @@ setMethod(
 
     sim_fixef <-
       sim %>%
-      methods::slot('fixef')
+      methods::slot("fixef")
 
     sim <-
       sim %>%
-      methods::slot('ranef') %>%
+      methods::slot("ranef") %>%
       magrittr::extract2(species) %>%
       magrittr::extract(, , x_var) %>%
       magrittr::add(
@@ -162,74 +162,74 @@ setMethod(
       ) %>%
       base::as.vector(.) %>%
       dplyr::data_frame(
-        response=.,
-        trait_values=
+        response = .,
+        trait_values =
           trait_values %>%
-          base::rep(each=nsims),
-        species=
+          base::rep(each = nsims),
+        species =
           species_names %>%
-          base::rep(each=nsims)
+          base::rep(each = nsims)
       ) %>%
       dplyr::group_by_(species)
 
     ggplot2::ggplot() +
     ggplot2::geom_ribbon(
-      data=
+      data =
         base::cbind(xvals, yvals) %>%
         base::as.data.frame(.),
       ggplot2::aes(
-        x=xvals,
-        ymin=`2.5%`,
-        ymax=`97.5%`
+        x = xvals,
+        ymin = `2.5%`,
+        ymax = `97.5%`
       ),
-      alpha=.3
+      alpha = .3
     ) +
     ggplot2::coord_cartesian(
-       xlim=c(-1, 1)
+       xlim = c(-1, 1)
     ) +
     ggplot2::xlab(trait) +
     ggplot2::ylab(
       "Response to " %>% base::paste0(x_var)
     ) +
     ggplot2::geom_abline(
-      intercept=
+      intercept =
         fixefs %>%
         magrittr::extract(x_var),
-      slope=
+      slope =
         fixefs %>%
         magrittr::extract(int)
     ) +
     ggplot2::geom_text(
-      data=
+      data =
         sim %>%
         dplyr::summarise(
-          response=
+          response =
             response %>%
             base::mean(.)
         ) %>%
         dplyr::bind_cols(
          dplyr::data_frame(trait_values)
         ),
-      mapping=
+      mapping =
         ggplot2::aes(
-          x=trait_values,
-          y=response,
-          label=species
+          x = trait_values,
+          y = response,
+          label = species
         ),
-      alpha=.9
+      alpha = .9
     ) +
     ggplot2::geom_violin(
-      data=sim,
+      data = sim,
       ggplot2::aes(
-        x=trait_values,
-        y=response,
-        group=species
+        x = trait_values,
+        y = response,
+        group = species
       ),
-      scale='width',
-      width=.11,
-      position="identity",
-      alpha=.2,
-      adjust=2
+      scale = "width",
+      width = .11,
+      position = "identity",
+      alpha = .2,
+      adjust = 2
     )
   }
 )

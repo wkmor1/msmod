@@ -21,8 +21,7 @@
 msm <- function(y, sites, x, species, traits, data, site_re = FALSE,
   type = c("mstm", "jsdm"),
   method = c("glmer", "jags", "stan"),
-  ...)
-{
+  ...) {
   x <- x %>% dplyr::select_vars_(base::names(data), .)
 
   if (!missing(traits)) {
@@ -52,11 +51,9 @@ msm <- function(y, sites, x, species, traits, data, site_re = FALSE,
 
   base::match.arg(method) %>%
   base::switch(
-    glmer =
-      msm_glmer(y, sites, x, species, n_species, traits, data, site_re, type, dots),
-    jags =
-      msm_jags(y, sites, x, species, n_species, data, type, dots),
-    stan =
-      msm_stan(y, sites, x, species, n_species, data , type, dots)
+    glmer = msm_glmer(y, sites, x, species, n_species, traits, data, site_re,
+                      type, dots),
+    jags  = msm_jags(y, sites, x, species, n_species, data, type, dots),
+    stan  = msm_stan(y, sites, x, species, n_species, data , type, dots)
   )
 }
