@@ -1,5 +1,6 @@
-#' @import R2jags
-#' @import rstan
+#' @importClassesFrom lme4 glmerMod
+#' @importFrom R2jags jags
+#' @importFrom rstan stan
 #' @importFrom dplyr %>%
 
 # to use magrittr shortcut
