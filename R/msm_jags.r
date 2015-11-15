@@ -113,17 +113,18 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
         function(x) {
           stats::glm(
             Y[, x] ~ X[, -1],
-            family = stats::binomial(link = probit)
+            family = stats::binomial(link = "probit")
           ) %>%
           stats::coef() %>%
           base::unname()
         }
       ) %>% base::t()
     })
-    B_raw <- B * sqrt(diag(Sigma))
-    mu <- apply(B_raw, 2, mean)
-    sigma <- apply(B_raw, 2, sd)
-    list(Tau = solve(Sigma), Z = Z, B_raw = B_raw, mu = mu, sigma = sigma)
+    B_raw <- B * base::sqrt(base::diag(Sigma))
+    mu <- base::apply(B_raw, 2, mean)
+    sigma <- base::apply(B_raw, 2, sd)
+    Tau <- base::solve(Sigma)
+    list(Tau = Tau, Z = Z, B_raw = B_raw, mu = mu, sigma = sigma)
   }
 
   parameters.to.save <-
@@ -151,3 +152,6 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
 
   return(result)
 }
+
+base::c("n_sites", "inprod", "Z", "pow", "inverse", "Tau", "B_raw") %>%
+  utils::globalVariables(.)

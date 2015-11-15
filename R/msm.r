@@ -59,6 +59,3 @@ msm <- function(y, sites, x, species, traits, data, site_re = FALSE,
       msm_stan(y, sites, x, species, n_species, data , type, dots)
   )
 }
-
-base::c("n_sites", "inprod", "Z", "pow", "inverse", "Tau", "Beta_raw") %>%
-utils::globalVariables(.)

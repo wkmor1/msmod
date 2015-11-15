@@ -1,7 +1,3 @@
-#' @import ggplot2
-#' @import lme4
-#' @import R2jags
-#' @import rstan
 #' @importFrom magrittr %>%
 #' @importFrom magrittr %<>%
 
@@ -25,7 +21,7 @@ bind_if_not_in <- function(x, y, z, out=base::get(z, parent.frame())) {
   )
 }
 
-# evaluate a function with a list of named arguments (do.call doesnt keep
+# evaluate a function with a list of named arguments (do.call doesn't keep
 # the names.)
 eval_with_args <- function(args, fun) {
   base::names(args) %>%
