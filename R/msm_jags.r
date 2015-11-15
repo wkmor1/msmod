@@ -155,5 +155,7 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots)
 
 
 utils::globalVariables(
-  base::c("n_sites", "inprod", "Z", "pow", "inverse", "Tau", "B_raw", "sigma", "covx")
+  base::c(
+    "n_sites", "inprod", "Z", "pow", "inverse", "Tau", "B_raw", "sigma", "covx"
+  )
 )
