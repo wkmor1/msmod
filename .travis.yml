@@ -41,13 +41,13 @@ install:
   - wget http://downloads.sourceforge.net/project/mcmc-jags/JAGS/4.x/Source/JAGS-4.0.1.tar.gz
   - tar xfvz JAGS-4.0.1.tar.gz
   - cd JAGS-4.0.1
-  - ./configure --prefix=~ && make && make install
-  - export PATH=$PATH:~/bin
+  - ./configure --prefix=$HOME && make && make install
+  - export PATH=$PATH:$HOME/bin
   - mkdir -p ~/Rlib
   - echo 'R_LIBS=~/Rlib' > .Renviron
   - echo 'options(repos = "http://cran.rstudio.com")' > .Rprofile
   - echo '.travis.yml' > .Rbuildignore
-  - Rscript -e 'install.packages("rjags", configure.args="--with-jags-include=~/include/JAGS --with-jags-lib=~/lib/JAGS --with-jags-modules=~/lib/JAGS/modules")'
+  - Rscript -e 'install.packages("rjags", configure.args="--with-jags-include=$HOME/include/JAGS --with-jags-lib=$HOME/lib/JAGS --with-jags-modules=$HOME/lib/JAGS/modules")'
   - Rscript -e 'if(!"devtools" %in% rownames(installed.packages())) { install.packages("devtools", dependencies = TRUE) }'
   - Rscript -e 'update.packages(ask = FALSE, instlib = "~/Rlib")'
   - Rscript -e 'devtools::install_deps(pkg = ".", dependencies = TRUE)'
