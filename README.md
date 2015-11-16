@@ -2,7 +2,9 @@
 
 [![Build Status](https://travis-ci.org/wkmor1/msmod.svg?branch=master)](https://travis-ci.org/wkmor1/msmod)
 
-Fitting multispecies models
+##Fitting multispecies models
+
+First install the software package JAGS for your platform from [this link](http://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/) 
 
 To install run the following
 ```R
