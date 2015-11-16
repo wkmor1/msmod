@@ -41,7 +41,7 @@ install:
   - wget http://downloads.sourceforge.net/project/mcmc-jags/JAGS/4.x/Source/JAGS-4.0.1.tar.gz
   - tar xfvz JAGS-4.0.1.tar.gz
   - cd JAGS-4.0.1
-  - ./configure && make && make install
+  - ./configure --prefix=/usr && make && make install
   - mkdir -p ~/Rlib
   - echo 'R_LIBS=~/Rlib' > .Renviron
   - echo 'options(repos = "http://cran.rstudio.com")' > .Rprofile
