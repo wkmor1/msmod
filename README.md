@@ -81,8 +81,8 @@ summary(msm_glmer)
 ```R
 coef_plot(msm_glmer)
 ```
-![Coefficient plot](/coef_plot.png?raw=true)
+![Coefficient plot](inst/coef_plot.png?raw=true)
 ```R
 te_plot(msm_glmer)
 ```
-![Trait-environment plot](/te_plot.png?raw=true)
+![Trait-environment plot](inst/te_plot.png?raw=true)
