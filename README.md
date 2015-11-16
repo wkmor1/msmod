@@ -6,7 +6,7 @@ Fitting multispecies models
 
 To install run the following
 ```R
-for (i in c('arm', 'devtools', 'dplyr', 'ggplot', 'lme4', 'MASS', 'mclust', 'R2jags', 'rstan'))
+for (i in c('arm', 'devtools', 'dplyr', 'ggplot2', 'lme4', 'MASS', 'mclust', 'R2jags', 'rstan'))
 if(!require(i, char = TRUE)) install.packages(i, char = TRUE)
 
 devtools::install_github('wkmor1/msmod')
