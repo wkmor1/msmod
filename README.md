@@ -2,18 +2,27 @@
 
 [![Build Status](https://travis-ci.org/wkmor1/msmod.svg?branch=master)](https://travis-ci.org/wkmor1/msmod)
 
-##Fitting multispecies models
+msmod is an R package for building statistical models of occupancy and abundance for more than one species at a time. So far, msmod includes the models described in
+[Pollock etal, 2012](http://onlinelibrary.wiley.com/doi/10.1111/j.1600-0587.2011.07085.x/abstract) and [Pollock etal 2014](http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12180/full)
 
-First install the software package JAGS for your platform from [this link](http://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/) 
+## Install external dependencies
+First install the software package JAGS, appropriate for your platform, from [this link](http://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/) 
 
-To install run the following
+## Install R package dependencies
+Now run the following:
 ```R
 for (i in c('arm', 'devtools', 'dplyr', 'ggplot2', 'lme4', 'MASS', 'mclust', 'R2jags', 'rstan'))
 if(!require(i, char = TRUE)) install.packages(i, char = TRUE)
+```
+## Install msmod
 
+Install msmod from this repository using devtools.
+```
 devtools::install_github('wkmor1/msmod')
 ```
-Fit a multispecies trait model
+## Fitting multispecies models 
+
+### Fitting a multispecies trait model as in [Pollock etal, 2012](http://onlinelibrary.wiley.com/doi/10.1111/j.1600-0587.2011.07085.x/abstract)
 ```R
 library(msmod)
 head(eucs)
@@ -26,7 +35,6 @@ head(eucs)
 ## 4    4 -0.3846743 -0.7874579   6.656727   4.955827   7.400395 TRUE FALSE
 ## 5    5 -1.6034499 -0.7874579   6.648985   4.955827   7.209399 TRUE FALSE
 ## 6    6  1.2950457 -0.7874579   6.734592   4.955827   8.520882 TRUE FALSE
-##   present ln_seed_wt ln_sla ln_ht species
 ## 1   FALSE       0.89  35.57    35     ALA
 ## 2   FALSE       0.89  35.57    35     ALA
 ## 3   FALSE       0.89  35.57    35     ALA
