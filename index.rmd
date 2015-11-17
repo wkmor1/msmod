@@ -1,0 +1,15 @@
+---
+title: "msmod: Multispecies models"
+output: slidy_presentation
+---
+
+## Fitting multispecies models
+
+- Multispecies trait models (MSTMs; [Pollock etal, 2012](http://onlinelibrary.wiley.com/doi/10.1111/j.1600-0587.2011.07085.x/abstract))
+- Joint Species Distribution Models (JSDMs; [Pollock etal, 2014](http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12180/full))
+
+## The eucs dataset
+```{r, echo = FALSE}
+data("eucs", package = "msmod")
+DT::datatable(eucs)
+```
