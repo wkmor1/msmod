@@ -1,15 +1,45 @@
 ---
 title: "msmod: Multispecies models"
-output: slidy_presentation
+output: 
+  slidy_presentation:
+    footer: "http://github.com/wkmor1/msmod"
+author: William K. Morris
+date: "`r Sys.Date()`"
 ---
 
 ## Fitting multispecies models
 
-- Multispecies trait models (MSTMs; [Pollock etal, 2012](http://onlinelibrary.wiley.com/doi/10.1111/j.1600-0587.2011.07085.x/abstract))
-- Joint Species Distribution Models (JSDMs; [Pollock etal, 2014](http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12180/full))
+- Multispecies trait models (MSTMs; see [Pollock etal, 2012](http://onlinelibrary.wiley.com/doi/10.1111/j.1600-0587.2011.07085.x/abstract))
+- Joint Species Distribution Models (JSDMs; see [Pollock etal, 2014](http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12180/full))
 
-## The eucs dataset
+## The Grampians _Eucalyptus_ dataset
 ```{r, echo = FALSE}
-data("eucs", package = "msmod")
-DT::datatable(eucs)
+library(magrittr)
+library(msmod)
+data(eucs)
+DT::datatable({
+    eucs[, sapply(eucs, class) == "numeric"] %<>% round(2)
+    eucs
+  }
+)
+```
+
+## Fitting a mutlispecies trait model
+```{r}
+library(msmod)
+msm_glmer <- 
+  msm(y = "present", sites = "plot", x = "logit_rock", species = "species",
+  traits = "ln_sla", data = eucs, type = "mstm", method = "glmer")
+
+summary(msm_glmer)
+```
+
+## Coefficient plot
+```{r}
+coef_plot(msm_glmer)
+```
+
+## Trait vs Environment plot
+```{r}
+te_plot(msm_glmer, "logit_rock", "ln_sla")
 ```
