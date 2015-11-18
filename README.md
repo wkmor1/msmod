@@ -50,47 +50,44 @@ msm_glmer <- msm(y = "present", sites = "plot", x = "logit_rock",
 summary(msm_glmer)
 ```
 ```
-## Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+## Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) [
+## glmerMod]
 ##  Family: binomial  ( logit )
-## Formula: present ~ logit_rock + ln_sla + logit_rock:ln_sla + ln_sla:ln_sla +  
-##     (1 + logit_rock + ln_sla | species)
+## Formula: present ~ logit_rock + logit_rock:ln_sla + (1 + logit_rock | species)
 ##    Data: data
 ## Control: control
 ## 
 ##      AIC      BIC   logLik deviance df.resid 
-##   4660.7   4731.9  -2320.3   4640.7     9150 
+##   4661.8   4704.6  -2324.9   4649.8     9154 
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -0.8191 -0.3628 -0.2014 -0.0725 16.9390 
+## -0.8182 -0.3615 -0.1997 -0.0736 15.3220 
 ## 
 ## Random effects:
-##  Groups  Name        Variance Std.Dev. Corr       
-##  species (Intercept)  0.7140  0.8450              
-##          logit_rock   0.6507  0.8066    0.15      
-##          ln_sla      11.8727  3.4457   -0.98  0.07
+##  Groups  Name        Variance Std.Dev. Corr 
+##  species (Intercept) 2.0924   1.4465        
+##          logit_rock  0.6376   0.7985   -0.13
 ## Number of obs: 9160, groups:  species, 20
 ## 
 ## Fixed effects:
 ##                   Estimate Std. Error z value Pr(>|z|)    
-## (Intercept)        -2.5200     0.2485 -10.142  < 2e-16 ***
-## logit_rock         -0.8069     0.2563  -3.148  0.00165 ** 
-## ln_sla             -1.4362     0.8390  -1.712  0.08694 .  
-## logit_rock:ln_sla  -4.7811     0.6000  -7.969  1.6e-15 ***
+## (Intercept)        -3.2951     0.3367  -9.786  < 2e-16 ***
+## logit_rock         -0.7262     0.2724  -2.666  0.00768 ** 
+## logit_rock:ln_sla  -4.6150     0.5749  -8.027 9.97e-16 ***
 ## ---
 ## Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 ## 
 ## Correlation of Fixed Effects:
-##             (Intr) lgt_rc ln_sla
-## logit_rock   0.146              
-## ln_sla      -0.769  0.147       
-## lgt_rck:ln_  0.122  0.292  0.123
+##             (Intr) lgt_rc
+## logit_rock  -0.006       
+## lgt_rck:ln_  0.157  0.340
 ```
 ```R
 coef_plot(msm_glmer)
 ```
 ![Coefficient plot](inst/coef_plot.png?raw=true)
 ```R
-te_plot(msm_glmer)
+te_plot(msm_glmer, "logit_rock", "ln_sla")
 ```
 ![Trait-environment plot](inst/te_plot.png?raw=true)
