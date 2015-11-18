@@ -24,9 +24,10 @@ msm <- function(y, sites, x, species, traits, data, site_re = FALSE,
   ...) {
   x <- x %>% dplyr::select_vars_(base::names(data), .)
 
-  if (!missing(traits)) {
+  no_traits <- missing(traits)
+
+  if (!no_traits) {
     traits <- traits %>% dplyr::select_vars_(base::names(data), .)
-    x <- x %>% base::c(traits)
   }
 
   data <-
@@ -36,8 +37,8 @@ msm <- function(y, sites, x, species, traits, data, site_re = FALSE,
         base::scale(.) %>%
         magrittr::extract(, 1) %>%
         magrittr::divide_by(2)
-        ),
-      x
+      ), {
+      if (no_traits) x else base::c(x, traits)}
     )
 
   n_species <-
