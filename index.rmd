@@ -25,8 +25,9 @@ DT::datatable({
 ```
 
 ## Fitting a mutlispecies trait model
-```{r}
+```{r, cache = TRUE}
 library(msmod)
+
 msm_glmer <- 
   msm(y = "present", sites = "plot", x = "logit_rock", species = "species",
   traits = "ln_sla", data = eucs, type = "mstm", method = "glmer")
