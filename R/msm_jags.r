@@ -105,8 +105,7 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots) {
       base::abs() %>% {
         base::ifelse(base::as.matrix(Y), ., -.)
       }
-    Sigma <-
-      mclust::mvnXXX(Z)$parameters$variance$sigma[, , 1]
+    Sigma <- stats::cov(Z)
     B <- base::suppressWarnings({
       base::sapply(
         base::seq_len(base::ncol(Y)),
