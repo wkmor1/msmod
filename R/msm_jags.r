@@ -121,7 +121,7 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots) {
     })
     B_raw <- B * base::sqrt(base::diag(Sigma))
     mu <- base::apply(B_raw, 2, mean)
-    sigma <- base::apply(B_raw, 2, sd)
+    sigma <- base::pmin(99, base::apply(B_raw, 2, sd))
     Tau <- base::solve(Sigma)
     list(Tau = Tau, Z = Z, B_raw = B_raw, mu = mu, sigma = sigma)
   }
