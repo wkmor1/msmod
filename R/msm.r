@@ -35,8 +35,7 @@ msm <- function(y, sites, x, species, traits, data, site_re = FALSE,
     dplyr::mutate_each_(
       dplyr::funs(
         base::scale(.) %>%
-        magrittr::extract(, 1) %>%
-        magrittr::divide_by(2)
+        magrittr::extract(, 1)
       ), {
       if (no_traits) x else base::c(x, traits)}
     )
