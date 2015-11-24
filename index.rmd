@@ -13,7 +13,7 @@ date: "`r Sys.Date()`"
 - Joint Species Distribution Models (JSDMs; see [Pollock etal, 2014](http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12180/full))
 
 ## The Grampians _Eucalyptus_ dataset
-```{r, echo = FALSE}
+```{r eucs, echo = FALSE}
 library(magrittr)
 library(msmod)
 data(eucs)
@@ -25,7 +25,7 @@ DT::datatable({
 ```
 
 ## Fitting a mutlispecies trait model
-```{r, cache = TRUE}
+```{r model}
 library(msmod)
 
 msm_glmer <- 
@@ -36,11 +36,11 @@ summary(msm_glmer)
 ```
 
 ## Coefficient plot
-```{r}
+```{r coef_plot}
 coef_plot(msm_glmer)
 ```
 
 ## Trait vs Environment plot
-```{r}
+```{r te_plot}
 te_plot(msm_glmer, "logit_rock", "ln_sla")
 ```
