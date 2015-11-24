@@ -1,5 +1,3 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 .travis.yml
-inst/coef_plot.png
-inst/te_plot.png
