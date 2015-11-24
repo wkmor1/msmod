@@ -86,8 +86,8 @@ summary(msm_glmer)
 ```R
 coef_plot(msm_glmer)
 ```
-![Coefficient plot](https://raw.githubusercontent.com/wkmor1/msmod/gh-pages/index_files/figure-slidy/unnamed-chunk-3-1.png)
+![Coefficient plot](https://raw.githubusercontent.com/wkmor1/msmod/gh-pages/index_files/figure-slidy/coef_plot.png)
 ```R
 te_plot(msm_glmer, "logit_rock", "ln_sla")
 ```
-![Trait-environment plot](https://raw.githubusercontent.com/wkmor1/msmod/gh-pages/index_files/figure-slidy/unnamed-chunk-4-1.png)
+![Trait-environment plot](https://raw.githubusercontent.com/wkmor1/msmod/gh-pages/index_files/figure-slidy/te_plot.png)
