@@ -53,7 +53,7 @@ msm <- function(y, sites, x, species, traits, data, site_re = FALSE,
   base::switch(
     glmer = msm_glmer(y, sites, x, species, n_species, traits, data, site_re,
                       type, dots),
-    jags  = msm_jags(y, sites, x, species, n_species, data, type, dots),
+    jags  = msm_jags(y, sites, x, species, n_species, data, type, dots, jsdm_jags),
     stan  = msm_stan(y, sites, x, species, n_species, data , type, dots)
   )
 }

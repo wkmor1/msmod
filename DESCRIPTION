@@ -1,6 +1,6 @@
 Package: msmod
 Title: Fit Multispecies Models
-Version: 0.0.0.9080
+Version: 0.0.0.9081
 Authors@R: person(c("William", "Keith"), "Morris", email = "wkmor1@gmail.com", role = c("aut", "cre"))
 Description: Functions to fit multispecies models.
 Depends:
@@ -17,5 +17,6 @@ Imports:
     methods,
     R2jags,
     rstan
-RoxygenNote: 5.0.0
-Suggests: testthat
+RoxygenNote: 5.0.1
+Suggests:
+    testthat
