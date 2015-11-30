@@ -4,14 +4,20 @@
 \name{coef_plot}
 \alias{coef_plot}
 \alias{coef_plot,glmerMod-method}
+\alias{coef_plot,rjags-method}
+\alias{coef_plot,rjags.parallel-method}
 \title{Plot the coefficients of a multispecies model}
 \usage{
 coef_plot(x)
 
 \S4method{coef_plot}{glmerMod}(x)
+
+\S4method{coef_plot}{rjags}(x)
+
+\S4method{coef_plot}{rjags.parallel}(x)
 }
 \arguments{
-\item{x}{An object of class 'glmerMod'}
+\item{x}{An object of class "glmerMod", "rjags" or "rjags_parallel"}
 }
 \description{
 Plot the coefficients of a multispecies model
@@ -19,9 +25,16 @@ Plot the coefficients of a multispecies model
 \section{Methods (by class)}{
 \itemize{
 \item \code{glmerMod}: coefficient plot for glmer model
+
+\item \code{rjags}: coefficient plot for rjags and rjags.parallel objects
+
+\item \code{rjags.parallel}: coefficient plot for rjags and rjags.parallel objects
 }}
 \examples{
-msm_fit <- msm('present', 'plot', 'logit_rock', 'species', 'ln_sla', eucs)
-coef_plot(msm_fit)
+msm_glmer <- msm('present', 'plot', 'logit_rock', 'species', 'ln_sla', eucs)
+coef_plot(msm_glmer)
+msm_jags <- msm('present', 'plot', 'logit_rock', 'species', data = eucs, type = 'jsdm',
+  method = 'jags')
+coef_plot(msm_jags)
 }
 
