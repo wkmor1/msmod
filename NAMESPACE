@@ -3,6 +3,7 @@
 export(coef_plot)
 export(msm)
 export(te_plot)
+export(waic)
 importClassesFrom(lme4,glmerMod)
 importFrom(R2jags,jags)
 importFrom(dplyr,"%>%")
