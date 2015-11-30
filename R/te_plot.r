@@ -12,7 +12,7 @@
 setGeneric(
   "te_plot",
   function(x, x_var, trait, nsims = 200) {
-    standardGeneric("te_plot")
+    base::standardGeneric("te_plot")
   }
 )
 
