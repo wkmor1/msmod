@@ -1,3 +1,5 @@
+#' @useDynLib msmod
+#' @importFrom Rcpp sourceCpp
 #' @importClassesFrom lme4 glmerMod
 #' @importFrom R2jags jags
 #' @importFrom rstan stan

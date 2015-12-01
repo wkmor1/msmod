@@ -19,7 +19,7 @@ waic_rjags <-
     
     data    <- x$model$data()
     samples <- x$BUGSoutput
-
+    
     n      <- data$n
     nsp    <- data$J
     nsamp  <- samples$n.sims
@@ -27,33 +27,29 @@ waic_rjags <-
     B <- samples$sims.list$B
     X <- data$X
     Y <- data$Y
-
-    theta <- base::array(base::numeric(), dim = base::c(n, nsp, nsamp))
-         
-    for (i in 1:n) {
-      for (j in 1:nsp) {
-         theta[i, j, ] <-
-           base::sapply(1:nsamp, function(k) B[k, j, ] %*% X[i, ])
-      }
-    }
-
-    pY <-
-      base::apply(
-        theta,
-        3,
-        function(x) {
-          x <- stats::pnorm(x)
-          base::ifelse(Y, x, 1 - x)
-        }
-      )
     
-    lpd <- base::sum(base::log(base::apply(pY, 1, base::mean)))
+    theta <- vapply(
+      1:nsamp, 
+      function(x) inprod_mat(X, B[x, ,]),
+      matrix(NA_real_, n, nsp)
+    )
     
-    p_waic <- base::sum(base::apply(base::log(pY), 1, stats::var))
+    pY <- apply(theta, 3, pbern_probit, Y = Y)
+    
+    lpd <- sum(log(apply(pY, 1, mean)))
+    
+    p_waic <- sum(apply(log(pY), 1, var))
     
     -2 * (lpd - p_waic)
     
   }
+
+pbern_probit <-
+  function(x, Y) {
+    x <- pnorm(x)
+    ifelse(Y, x, 1 - x)
+  }
+
 
 #' @describeIn waic calculate waic for rjags and rjags.parallel objects
 setMethod(
