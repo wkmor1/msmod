@@ -21,6 +21,10 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots, model) {
     base::unlist(.) %>%
     base::matrix(ncol = n_species)
 
+  if (J > nrow(Y)) {
+    stop("Number of sites must be greater than number of species")
+  }
+
   K <-
     x %>%
     base::length(.) %>%
