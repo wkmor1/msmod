@@ -11,7 +11,7 @@
 
 setGeneric(
   "te_plot",
-  function(x, x_var, trait, nsims = 200) {
+  function(x, x_var, trait, nsims = 200, rlim = c(-2, 2)) {
     base::standardGeneric("te_plot")
   }
 )
@@ -20,7 +20,7 @@ setGeneric(
 setMethod(
   "te_plot",
   base::c(x = "glmerMod"),
-  function(x, x_var, trait, nsims) {
+  function(x, x_var, trait, nsims, rlim = c(-2, 2)) {
 
     frame <-
       x %>%
@@ -102,7 +102,7 @@ setMethod(
       base::unlist(.)
 
     xvals <-
-      base::seq(-2, 2, length.out = 201)
+      base::seq(rlim[1], rlim[2], length.out = 201)
 
     yvals <-
       nsims %>%
