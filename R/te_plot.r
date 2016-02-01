@@ -102,8 +102,7 @@ setMethod(
       base::unlist(.)
 
     xvals <-
-      -1 %>%
-      base::seq(1, length.out = 201)
+      base::seq(-2, 2, length.out = 201)
 
     yvals <-
       nsims %>%
@@ -185,7 +184,7 @@ setMethod(
       alpha = .3
     ) +
     ggplot2::coord_cartesian(
-       xlim = c(-1, 1)
+       xlim = c(-2, 2)
     ) +
     ggplot2::xlab(trait) +
     ggplot2::ylab(
