@@ -4,6 +4,7 @@
 #' @param x_var Character. Name of site-level predictor variable.
 #' @param trait Character. Name of species trait variable.
 #' @param nsims Integer. Number of simulations for approximate Bayesian estimates of credible intervals and posterior densities.
+#' @param rlim Numeric vector. The x axis limits of the confidence ribbon.
 #' @examples
 #' msm_fit <- msm('present', 'plot', 'logit_rock', 'species', 'ln_sla', eucs)
 #' te_plot(msm_fit, 'logit_rock', 'ln_sla')
