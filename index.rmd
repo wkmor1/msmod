@@ -2,7 +2,8 @@
 title: "msmod: Multispecies models"
 output: 
   slidy_presentation:
-    footer: "http://github.com/wkmor1/msmod"
+    footer: http://github.com/wkmor1/msmod
+    self_contained: no
 author: William K. Morris
 date: "`r Sys.Date()`"
 ---
