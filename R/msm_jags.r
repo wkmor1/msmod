@@ -32,7 +32,7 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots, model) {
 
   X <-
     data %>%
-    dplyr::distinct_(sites) %>%
+    dplyr::distinct_(sites, .keep_all = TRUE) %>%
     dplyr::select_(.dots = x) %>%
     magrittr::inset2("(Intercept)", value = 1) %>%
     base::subset(
@@ -87,7 +87,7 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots, model) {
     })
     B_raw <- B * base::sqrt(base::diag(Sigma))
     mu <- base::apply(B_raw, 2, mean)
-    sigma <- base::pmin(99, base::apply(B_raw, 2, sd))
+    sigma <- base::pmin(99, base::apply(B_raw, 2, stats::sd))
     Tau <- base::solve(Sigma)
     list(Tau = Tau, Z = Z, B_raw = B_raw, mu = mu, sigma = sigma)
   }

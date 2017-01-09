@@ -38,7 +38,7 @@ waic_rjags <-
     
     lpd <- sum(log(apply(pY, 1, mean)))
     
-    p_waic <- sum(apply(log(pY), 1, var))
+    p_waic <- sum(apply(log(pY), 1, stats::var))
     
     -2 * (lpd - p_waic)
     
@@ -46,7 +46,7 @@ waic_rjags <-
 
 pbern_probit <-
   function(x, Y) {
-    x <- pnorm(x)
+    x <- stats::pnorm(x)
     ifelse(Y, x, 1 - x)
   }
 

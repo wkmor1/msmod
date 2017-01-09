@@ -72,7 +72,7 @@ coef_plot_rjags <- function(x) {
     "Coefficient value" =
       base::colMeans(samples),
     ci =
-      base::apply(samples, 2, sd) %>%
+      base::apply(samples, 2, stats::sd) %>%
       magrittr::multiply_by(1.96)
   ) %>%
   coef_plot_
@@ -92,4 +92,4 @@ setMethod(
   coef_plot_rjags
 )
 
-utils::globalVariables(base::c("Coefficient value", "ci"))
+utils::globalVariables(base::c("Coefficient value", "ci", "coef"))

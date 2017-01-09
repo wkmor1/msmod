@@ -6,9 +6,9 @@
 \alias{te_plot,glmerMod-method}
 \title{Plot the relationship between a trait and the environment infered from a multispecies model}
 \usage{
-te_plot(x, x_var, trait, nsims = 200)
+te_plot(x, x_var, trait, nsims = 200, rlim = c(-2, 2))
 
-\S4method{te_plot}{glmerMod}(x, x_var, trait, nsims = 200)
+\S4method{te_plot}{glmerMod}(x, x_var, trait, nsims = 200, rlim = c(-2, 2))
 }
 \arguments{
 \item{x}{An object of class 'glmerMod'}
@@ -18,6 +18,8 @@ te_plot(x, x_var, trait, nsims = 200)
 \item{trait}{Character. Name of species trait variable.}
 
 \item{nsims}{Integer. Number of simulations for approximate Bayesian estimates of credible intervals and posterior densities.}
+
+\item{rlim}{Numeric vector. The x axis limits of the confidence ribbon.}
 }
 \description{
 Plot the relationship between a trait and the environment infered from a multispecies model
