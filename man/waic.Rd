@@ -3,27 +3,22 @@
 \docType{methods}
 \name{waic}
 \alias{waic}
-\alias{waic,rjags-method}
-\alias{waic,rjags.parallel-method}
+\alias{waic,jagsUI-method}
 \title{Calculate waic}
 \usage{
 waic(x)
 
-\S4method{waic}{rjags}(x)
-
-\S4method{waic}{rjags.parallel}(x)
+\S4method{waic}{jagsUI}(x)
 }
 \arguments{
-\item{x}{An object of class "rjags", or "rjags.parallel"}
+\item{x}{An object of class "jagsUI"}
 }
 \description{
 Calculate waic
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{rjags}: calculate waic for rjags and rjags.parallel objects
-
-\item \code{rjags.parallel}: calculate waic for rjags and rjags.parallel objects
+\item \code{jagsUI}: waic for jags model
 }}
 \examples{
 msm_jags <- msm('present', 'plot', 'logit_rock', 'species', data = eucs, type = 'jsdm',

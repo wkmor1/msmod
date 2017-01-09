@@ -1,6 +1,6 @@
 Package: msmod
 Title: Fit Multispecies Models
-Version: 0.0.0.9091
+Version: 0.0.0.9092
 Authors@R: person(c("William", "Keith"), "Morris", email = "wkmor1@gmail.com", role = c("aut", "cre"))
 Description: Functions to fit multispecies models.
 Depends:
@@ -15,7 +15,7 @@ Imports:
     magrittr,
     MASS,
     methods,
-    R2jags,
+    jagsUI,
     Rcpp,
     rstan
 Suggests:

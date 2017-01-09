@@ -7,14 +7,11 @@
 #' msm_jags <- msm('present', 'plot', 'logit_rock', 'species', data = eucs, type = 'jsdm',
 #'   method = 'jags')
 #' coef_plot(msm_jags)
+ 
 #' @export
+coef_plot <- function(x) UseMethod("coef_plot")
 
-setGeneric(
-  "coef_plot",
-  function(x) {
-    base::standardGeneric("coef_plot")
-  }
-)
+setGeneric("coef_plot")
 
 coef_plot_ <- function(coefs) {
   ggplot2::ggplot(
@@ -30,6 +27,35 @@ coef_plot_ <- function(coefs) {
     ) +
     ggplot2::scale_y_discrete(name = "")
 }
+
+coef_plot.jagsUI <- function(x) {
+  samples <-
+    magrittr::extract2(x, "sims.list") %>%
+    magrittr::extract2("B") %>% 
+    base::apply(base::c(1, 3), base::mean)
+  dplyr::data_frame(
+    coef =
+      base::c(
+        "(Intercept)",
+        base::attr(x, "x")
+      ),
+    "Coefficient value" =
+      base::colMeans(samples),
+    ci =
+      base::apply(samples, 2, stats::sd) %>%
+      magrittr::multiply_by(1.96)
+  ) %>%
+  coef_plot_
+}
+
+setOldClass("jagsUI")
+
+#' @describeIn coef_plot coefficient plot for jags model
+setMethod(
+  "coef_plot",
+  base::c(x = "jagsUI"),
+  coef_plot.jagsUI
+)
 
 #' @describeIn coef_plot coefficient plot for glmer model
 setMethod(
@@ -53,43 +79,8 @@ setMethod(
         methods::slot("sd") %>%
         magrittr::multiply_by(1.96)
     ) %>%
-    coef_plot_
+      coef_plot_
   }
-)
-
-coef_plot_rjags <- function(x) {
-  samples <-
-    magrittr::extract2(x, "BUGSoutput") %>%
-    magrittr::extract2("sims.list") %>%
-    magrittr::extract2("B") %>% 
-    base::apply(base::c(1, 3), base::mean)
-  dplyr::data_frame(
-    coef =
-      base::c(
-        "(Intercept)",
-        base::attr(x, "x")
-      ),
-    "Coefficient value" =
-      base::colMeans(samples),
-    ci =
-      base::apply(samples, 2, stats::sd) %>%
-      magrittr::multiply_by(1.96)
-  ) %>%
-  coef_plot_
-}
-
-#' @describeIn coef_plot coefficient plot for rjags and rjags.parallel objects
-setMethod(
-  "coef_plot",
-  base::c(x = "rjags"),
-  coef_plot_rjags
-)
-
-#' @describeIn coef_plot coefficient plot for rjags and rjags.parallel objects
-setMethod(
-  "coef_plot",
-  base::c(x = "rjags.parallel"),
-  coef_plot_rjags
 )
 
 utils::globalVariables(base::c("Coefficient value", "ci", "coef"))

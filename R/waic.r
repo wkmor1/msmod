@@ -1,30 +1,25 @@
 #' Calculate waic
 #'
-#' @param x An object of class "rjags", or "rjags.parallel"
+#' @param x An object of class "jagsUI"
 #' @examples
 #' msm_jags <- msm('present', 'plot', 'logit_rock', 'species', data = eucs, type = 'jsdm',
 #'   method = 'jags')
 #' waic(msm_jags)
+
 #' @export
+waic <- function(x) UseMethod("waic")
 
-setGeneric(
-  "waic",
-  function(x) {
-    base::standardGeneric("waic")
-  }
-)
+setGeneric("waic")
 
-waic_rjags <-
+waic.jagsUI <-
   function(x) {
     
     data    <- x$model$data()
-    samples <- x$BUGSoutput
-    
     n      <- data$n
     nsp    <- data$J
-    nsamp  <- samples$n.sims
+    nsamp  <- x$mcmc.info$n.samples
     
-    B <- samples$sims.list$B
+    B <- x$sims.list$B
     X <- data$X
     Y <- data$Y
     
@@ -50,17 +45,9 @@ pbern_probit <-
     ifelse(Y, x, 1 - x)
   }
 
-
-#' @describeIn waic calculate waic for rjags and rjags.parallel objects
+#' @describeIn waic waic for jags model
 setMethod(
   "waic",
-  base::c(x = "rjags"),
-  waic_rjags
-)
-
-#' @describeIn waic calculate waic for rjags and rjags.parallel objects
-setMethod(
-  "waic",
-  base::c(x = "rjags.parallel"),
-  waic_rjags
+  base::c(x = "jagsUI"),
+  waic.jagsUI
 )

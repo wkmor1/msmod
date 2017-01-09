@@ -3,22 +3,13 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots, model) {
     stop("mstm models currently only implemented with method = \"glmer\"")
   }
 
-  serial <- is.null(dots$n.cluster)
-
-  if (serial) {
-    jags_fn <- "R2jags::jags"
-  } else {
-    jags_fn <- "R2jags::jags.parallel"
-    dots$export_obj_names <- base::c("J", "K", "Y", "X", "I", "df", "n")
-    dots$envir <- base::environment()
-  }
-
   J <- n_species
 
   Y <-
     y %>%
     dplyr::select_(data, .) %>%
     base::unlist(.) %>%
+    base::as.numeric(.) %>%
     base::matrix(ncol = n_species)
 
   if (J > nrow(Y)) {
@@ -95,6 +86,12 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots, model) {
   parameters.to.save <-
     base::c("B", "sigma", "Rho", "EnvRho")
 
+  
+  if (!is.null(dots$n.cores)) {
+    dots$export_obj_names <- base::c("J", "K", "Y", "X", "I", "df", "n")
+    dots$envir <- base::environment()
+  }
+  
   result <-
     base::list(
       Y    = Y,
@@ -106,14 +103,15 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots, model) {
       I    = I,
       df   = df
     ) %>%
-    base::list(model) %>%
+    base::list(model()) %>%
     magrittr::set_names(base::c("data", "model.file")) %>%
     bind_if_not_in(dots, "inits") %>%
     bind_if_not_in(dots, "parameters.to.save") %>%
+    bind_if_not_in(dots, "n.chains", if (is.null(dots$n.cores)) 3 else dots$n.cores) %>%
     bind_if_not_in(dots, "n.iter", 200) %>%
     bind_if_not_in(dots, "DIC", FALSE) %>%
     base::c(dots) %>%
-    eval_with_args(jags_fn)
+    eval_with_args("jagsUI::jags")
 
   base::attr(result, "x") <- base::unname(x)
   
