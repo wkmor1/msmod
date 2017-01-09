@@ -1,65 +1,10 @@
-# .travis.yml using container-based infrastructure
-# based on https://github.com/dmenne/bugsexamples/blob/master/.travis.yml
-# use c as catch-all language
-language: c
+language: r
+cache: packages
 
-# use containers
-sudo: false
+r_binary_packages: 
+  - rjags
 
-# only run for pushes to master branch
-branches:
-  only:
-   - master
-
-# install R: use r-packages-precise (https://cran.r-project.org/bin/linux/ubuntu/precise/)
-# as source which is white listed (https://github.com/travis-ci/apt-source-whitelist/)
-addons:
-  apt:
-    sources:
-    - r-packages-precise
-    packages:
-    - r-base-dev
-    - r-recommended
-    - pandoc
-
-# cache local R libraries directory:
-cache:
-  directories:
-    - ~/Rlib
-
-# install the package and dependencies:
-# - create directory for R libraries (if not already exists)
-# - create .Renviron with location of R libraries
-# - define R repository in .Rprofile
-# - add .travis.yml to .Rbuildignore
-# - install devtools if not already installed
-# - update all installed packages
-# - install package with dependencies
-install:
-  - WORKDIR=`pwd`
-  - cd $HOME
-  - wget http://downloads.sourceforge.net/project/mcmc-jags/JAGS/4.x/Source/JAGS-4.0.1.tar.gz
-  - tar xfvz JAGS-4.0.1.tar.gz
-  - cd JAGS-4.0.1
-  - ./configure --prefix=$HOME && make && make install
-  - cd $WORKDIR
-  - export PATH=$PATH:$HOME/bin
-  - export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$HOME/lib/pkgconfig
-  - mkdir -p ~/Rlib
-  - echo 'R_LIBS=~/Rlib' > .Renviron
-  - echo 'options(repos = "http://cran.rstudio.com")' > .Rprofile
-  - Rscript -e 'install.packages("rjags", configure.args="--with-jags-prefix=$HOME --with-jags-libdir=$HOME/lib --with-jags-includedir=$HOME/include  --enable-rpath")'
-  - Rscript -e 'install.packages(c("devtools"), dependencies = TRUE)'
-  - Rscript -e 'update.packages(ask = FALSE, instlib = "~/Rlib")'
-  - Rscript -e 'devtools::install_deps(pkg = ".", dependencies = TRUE)'
-
-# Build and check package
-script:
-  - R CMD build .  --no-manual
-  - PKG_FILE_NAME=$(ls -1t *.tar.gz | head -n 1)
-  - R CMD check "${PKG_FILE_NAME}"  --no-build-vignettes --no-manual --as-cran
-
- # send e-mails if stuff changes
+# send e-mails if stuff changes
 notifications:
   email:
     on_success: change
