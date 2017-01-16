@@ -31,9 +31,9 @@ jsdm_jags <- function() {
       }
     }
     for (k in 1:K) {
-      mu[k] ~ dnorm(0, .001)
+      mu[k] ~ dnorm(0, 1)
       tau[k] <- pow(sigma[k], -2)
-      sigma[k] ~ dunif(0, 100)
+      sigma[k] ~ dnorm(0, 1)T(0,)
     }
     Tau ~ dwish(I, df)
     Sigma <- inverse(Tau)

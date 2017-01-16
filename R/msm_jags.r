@@ -39,7 +39,7 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots, model) {
 
   df <-
     n_species %>%
-    magrittr::add(1)
+    magrittr::add(3)
 
   I <-
     n_species %>%
@@ -84,14 +84,8 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots, model) {
   }
 
   parameters.to.save <-
-    base::c("B", "sigma", "Rho", "EnvRho")
+    base::c("B", "Rho", "EnvRho")
 
-  
-  if (!is.null(dots$n.cores)) {
-    dots$export_obj_names <- base::c("J", "K", "Y", "X", "I", "df", "n")
-    dots$envir <- base::environment()
-  }
-  
   result <-
     base::list(
       Y    = Y,
