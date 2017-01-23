@@ -39,7 +39,7 @@ msm_jags <- function(y, sites, x, species, n_species, data, type, dots, model) {
 
   df <-
     n_species %>%
-    magrittr::add(3)
+    magrittr::add(1)
 
   I <-
     n_species %>%
