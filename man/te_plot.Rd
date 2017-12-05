@@ -28,8 +28,8 @@ Plot the relationship between a trait and the environment infered from a multisp
 \itemize{
 \item \code{glmerMod}: Trait environment plot for glmer model
 }}
+
 \examples{
 msm_fit <- msm('present', 'plot', 'logit_rock', 'species', 'ln_sla', eucs)
 te_plot(msm_fit, 'logit_rock', 'ln_sla')
 }
-

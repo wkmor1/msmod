@@ -37,13 +37,16 @@ setMethod(
         base::length(.)
       )
 
-    int <-
-      x_var %>%
-      base::paste0(":", trait)
-
     fixefs <-
       x %>%
       lme4::fixef(.)
+
+    int <- 
+      grep(
+        sprintf("%1$s:%2$s|%2$s:%1$s", x_var, trait),
+        names(fixefs),
+        value = TRUE
+      )
 
     k <-
       fixefs %>%
